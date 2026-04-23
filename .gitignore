@@ -1,0 +1,28 @@
+# Environment and local config
+.env
+.env.*
+
+# Anchor/Solana build artifacts
+.anchor/
+target/
+test-ledger/
+**/*.so
+
+# JavaScript package manager artifacts
+node_modules/
+.yarn/
+.pnpm-store/
+.pnp.cjs
+.pnp.loader.mjs
+
+# Local key material
+**/*-keypair.json
+
+# Logs and debug outputs
+debug/
+*.log
+
+# OS/editor noise
+.DS_Store
+.vscode/
+.idea/
