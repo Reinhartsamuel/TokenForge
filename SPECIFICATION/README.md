@@ -52,3 +52,5 @@ TokenForge provides:
 ## Status
 
 PIVOTED TO CANONICAL-FIRST — April 2026
+
+Implementation note: TokenForge tracks canonical SSTS releases and avoids shipping a parallel SSTS core implementation.
