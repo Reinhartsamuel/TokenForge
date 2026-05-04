@@ -1,20 +1,12 @@
 [package]
 name = "verification_policy_noop"
-version = "0.1.0"
-description = "TokenForge reference no-op verification policy — always approves transfers. Testing/devnet only."
+version = "0.2.0"
+description = "TokenForge reference no-op verification policy — always approves. Compatible with canonical SSTS CPI and introspection modes."
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
 name = "verification_policy_noop"
 
-[features]
-no-entrypoint = []
-no-idl = []
-no-log-ix-name = []
-cpi = ["no-entrypoint"]
-idl-build = ["anchor-lang/idl-build"]
-default = []
-
 [dependencies]
-anchor-lang = "0.31.1"
+solana-program = "2.2.1"

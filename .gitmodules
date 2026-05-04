@@ -1,0 +1,3 @@
+[submodule "lib/canonical-ssts"]
+	path = lib/canonical-ssts
+	url = https://github.com/Solana-Security-Token-Standard/solana-security-token-standard.git

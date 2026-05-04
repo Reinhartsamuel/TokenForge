@@ -1,66 +1,50 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token_2022::{
-    freeze_account, thaw_account as spl_thaw_account, FreezeAccount, ThawAccount, Token2022,
-};
 use anchor_spl::token_interface::{Mint, TokenAccount};
 
 declare_id!("99frBpGJFhSx1qMt64T8HSfZMLUiy5YhZVmnG7X4pk2K");
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-/// Seed prefix for the PolicyAccount PDA.
 pub const POLICY_SEED: &[u8] = b"famp_policy";
+pub const MAX_LIST_SIZE: usize = 16;
 
-/// Space for the PolicyAccount on-chain.
-/// discriminator(8) + size_of::<PolicyAccount>()
 pub const POLICY_ACCOUNT_SIZE: usize = 8 + std::mem::size_of::<PolicyAccount>();
-
-// ─── Program ─────────────────────────────────────────────────────────────────
 
 #[program]
 pub mod famp {
     use super::*;
 
-    /// Initialise a FAMP policy for a given SSTS token mint.
-    ///
-    /// - Creates a `PolicyAccount` PDA seeded by `[POLICY_SEED, mint]`.
-    /// - The issuer must separately delegate freeze authority on the mint to
-    ///   the FAMP program's PDA before calling this instruction (or use the
-    ///   SSTS `create_token` instruction which does it automatically).
-    /// - Both Merkle roots are initialised to `[0u8; 32]` (empty list).
-    pub fn create_policy(ctx: Context<CreatePolicy>) -> Result<()> {
+    pub fn create_policy(ctx: Context<CreatePolicy>, allowlist_mode: bool) -> Result<()> {
         let policy = &mut ctx.accounts.policy;
         policy.mint = ctx.accounts.mint.key();
         policy.issuer_authority = ctx.accounts.issuer_authority.key();
-        policy.allowlist_merkle_root = [0u8; 32];
-        policy.blocklist_merkle_root = [0u8; 32];
-        policy.total_allowed = 0;
-        policy.total_blocked = 0;
+        policy.allowlist_mode = allowlist_mode;
+        policy.allowlist = [Pubkey::default(); MAX_LIST_SIZE];
+        policy.blocklist = [Pubkey::default(); MAX_LIST_SIZE];
+        policy.allowlist_count = 0;
+        policy.blocklist_count = 0;
         policy.bump = ctx.bumps.policy;
 
         emit!(PolicyCreated {
             mint: policy.mint,
             issuer_authority: policy.issuer_authority,
+            allowlist_mode,
         });
 
         Ok(())
     }
 
-    /// Add a wallet to the allowlist by updating the stored Merkle root.
-    ///
-    /// The caller (SDK) must compute the new Merkle root off-chain after
-    /// inserting `wallet` into the allowlist tree, then pass it here.
-    /// The on-chain program stores only the root — proof computation is off-chain.
-    ///
-    /// Restricted to `issuer_authority`.
-    pub fn add_to_allowlist(
-        ctx: Context<UpdatePolicy>,
-        wallet: Pubkey,
-        new_allowlist_root: [u8; 32],
-    ) -> Result<()> {
+    pub fn add_to_allowlist(ctx: Context<UpdatePolicy>, wallet: Pubkey) -> Result<()> {
         let policy = &mut ctx.accounts.policy;
-        policy.allowlist_merkle_root = new_allowlist_root;
-        policy.total_allowed = policy.total_allowed.saturating_add(1);
+        require!(
+            policy.allowlist_count < MAX_LIST_SIZE as u8,
+            FampError::AllowlistFull
+        );
+        for i in 0..policy.allowlist_count as usize {
+            require!(policy.allowlist[i] != wallet, FampError::AlreadyInAllowlist);
+        }
+
+        let idx = policy.allowlist_count as usize;
+        policy.allowlist[idx] = wallet;
+        policy.allowlist_count += 1;
 
         emit!(AllowlistUpdated {
             mint: policy.mint,
@@ -71,162 +55,129 @@ pub mod famp {
         Ok(())
     }
 
-    /// Remove a wallet from the allowlist and immediately freeze their token account.
-    ///
-    /// `new_allowlist_root` is the updated Merkle root after removal (computed off-chain).
-    ///
-    /// Restricted to `issuer_authority`.
-    pub fn remove_from_allowlist(
-        ctx: Context<RemoveFromAllowlist>,
-        new_allowlist_root: [u8; 32],
-    ) -> Result<()> {
-        let mint_key;
-        let bump;
-        let wallet;
-        {
-            let policy = &mut ctx.accounts.policy;
-            policy.allowlist_merkle_root = new_allowlist_root;
-            policy.total_allowed = policy.total_allowed.saturating_sub(1);
-            mint_key = policy.mint;
-            bump = policy.bump;
-            wallet = ctx.accounts.wallet.key();
+    pub fn remove_from_allowlist(ctx: Context<UpdatePolicy>, wallet: Pubkey) -> Result<()> {
+        let policy = &mut ctx.accounts.policy;
+        let mut found = false;
+        let count = policy.allowlist_count as usize;
+        for i in 0..count {
+            if policy.allowlist[i] == wallet {
+                if i < count - 1 {
+                    policy.allowlist[i] = policy.allowlist[count - 1];
+                }
+                policy.allowlist[count - 1] = Pubkey::default();
+                policy.allowlist_count -= 1;
+                found = true;
+                break;
+            }
         }
-
-        let seeds = &[POLICY_SEED, mint_key.as_ref(), &[bump]];
-        let signer_seeds = &[&seeds[..]];
-
-        freeze_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
-                FreezeAccount {
-                    account: ctx.accounts.token_account.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    authority: ctx.accounts.policy.to_account_info(),
-                },
-                signer_seeds,
-            ),
-        )?;
+        require!(found, FampError::WalletNotFound);
 
         emit!(AllowlistUpdated {
-            mint: mint_key,
+            mint: policy.mint,
             wallet,
             action: ListAction::Removed,
+        });
+
+        emit!(WalletBlocked {
+            mint: policy.mint,
+            wallet,
         });
 
         Ok(())
     }
 
-    /// Add a wallet to the blocklist and immediately freeze their token account.
-    ///
-    /// `new_blocklist_root` is the updated Merkle root after insertion (computed off-chain).
-    ///
-    /// Restricted to `issuer_authority`.
-    pub fn add_to_blocklist(
-        ctx: Context<AddToBlocklist>,
-        new_blocklist_root: [u8; 32],
-    ) -> Result<()> {
-        let mint_key;
-        let bump;
-        let wallet;
-        {
-            let policy = &mut ctx.accounts.policy;
-            policy.blocklist_merkle_root = new_blocklist_root;
-            policy.total_blocked = policy.total_blocked.saturating_add(1);
-            mint_key = policy.mint;
-            bump = policy.bump;
-            wallet = ctx.accounts.wallet.key();
+    pub fn add_to_blocklist(ctx: Context<UpdatePolicy>, wallet: Pubkey) -> Result<()> {
+        let policy = &mut ctx.accounts.policy;
+        require!(
+            policy.blocklist_count < MAX_LIST_SIZE as u8,
+            FampError::BlocklistFull
+        );
+        for i in 0..policy.blocklist_count as usize {
+            require!(policy.blocklist[i] != wallet, FampError::AlreadyInBlocklist);
         }
 
-        let seeds = &[POLICY_SEED, mint_key.as_ref(), &[bump]];
-        let signer_seeds = &[&seeds[..]];
-
-        freeze_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
-                FreezeAccount {
-                    account: ctx.accounts.token_account.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    authority: ctx.accounts.policy.to_account_info(),
-                },
-                signer_seeds,
-            ),
-        )?;
+        let idx = policy.blocklist_count as usize;
+        policy.blocklist[idx] = wallet;
+        policy.blocklist_count += 1;
 
         emit!(BlocklistUpdated {
-            mint: mint_key,
+            mint: policy.mint,
             wallet,
             action: ListAction::Added,
         });
 
-        Ok(())
-    }
-
-    /// Remove a wallet from the blocklist.
-    ///
-    /// `new_blocklist_root` is the updated Merkle root after removal (computed off-chain).
-    /// Does not automatically thaw — call `thaw_token_account` separately if needed.
-    ///
-    /// Restricted to `issuer_authority`.
-    pub fn remove_from_blocklist(
-        ctx: Context<RemoveFromBlocklist>,
-        new_blocklist_root: [u8; 32],
-    ) -> Result<()> {
-        let mint_key;
-        let wallet;
-        {
-            let policy = &mut ctx.accounts.policy;
-            policy.blocklist_merkle_root = new_blocklist_root;
-            policy.total_blocked = policy.total_blocked.saturating_sub(1);
-            mint_key = policy.mint;
-            wallet = ctx.accounts.wallet.key();
-        }
-
-        emit!(BlocklistUpdated {
-            mint: mint_key,
+        emit!(WalletBlocked {
+            mint: policy.mint,
             wallet,
-            action: ListAction::Removed,
         });
 
         Ok(())
     }
 
-    /// Unfreeze a token account for a wallet that has been re-admitted.
-    ///
-    /// Used when a previously blocked/removed wallet is cleared by the issuer.
-    /// Restricted to `issuer_authority`.
-    pub fn thaw_token_account(ctx: Context<ThawTokenAccount>) -> Result<()> {
-        let mint_key = ctx.accounts.policy.mint;
-        let bump = ctx.accounts.policy.bump;
-        let seeds = &[POLICY_SEED, mint_key.as_ref(), &[bump]];
-        let signer_seeds = &[&seeds[..]];
+    pub fn remove_from_blocklist(ctx: Context<UpdatePolicy>, wallet: Pubkey) -> Result<()> {
+        let policy = &mut ctx.accounts.policy;
+        let mut found = false;
+        let count = policy.blocklist_count as usize;
+        for i in 0..count {
+            if policy.blocklist[i] == wallet {
+                if i < count - 1 {
+                    policy.blocklist[i] = policy.blocklist[count - 1];
+                }
+                policy.blocklist[count - 1] = Pubkey::default();
+                policy.blocklist_count -= 1;
+                found = true;
+                break;
+            }
+        }
+        require!(found, FampError::WalletNotFound);
 
-        spl_thaw_account(
-            CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
-                ThawAccount {
-                    account: ctx.accounts.token_account.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    authority: ctx.accounts.policy.to_account_info(),
-                },
-                signer_seeds,
-            ),
-        )?;
+        emit!(BlocklistUpdated {
+            mint: policy.mint,
+            wallet,
+            action: ListAction::Removed,
+        });
+
+        emit!(WalletUnblocked {
+            mint: policy.mint,
+            wallet,
+        });
+
+        Ok(())
+    }
+
+    pub fn verify_transfer(ctx: Context<VerifyTransfer>) -> Result<()> {
+        let policy = &ctx.accounts.policy;
+
+        let from_owner = ctx.accounts.from_token_account.owner;
+        let to_owner = ctx.accounts.to_token_account.owner;
+
+        if policy.is_blocked(&from_owner) {
+            return err!(FampError::WalletBlocked);
+        }
+        if policy.is_blocked(&to_owner) {
+            return err!(FampError::WalletBlocked);
+        }
+
+        if policy.allowlist_mode {
+            if !policy.is_allowed(&from_owner) {
+                return err!(FampError::WalletNotAllowlisted);
+            }
+            if !policy.is_allowed(&to_owner) {
+                return err!(FampError::WalletNotAllowlisted);
+            }
+        }
 
         Ok(())
     }
 }
-
-// ─── Accounts ────────────────────────────────────────────────────────────────
 
 #[derive(Accounts)]
 pub struct CreatePolicy<'info> {
     #[account(mut)]
     pub issuer_authority: Signer<'info>,
 
-    /// The SSTS Token-2022 mint this policy governs.
     pub mint: InterfaceAccount<'info, Mint>,
 
-    /// PolicyAccount PDA — seeded by [POLICY_SEED, mint].
     #[account(
         init,
         payer = issuer_authority,
@@ -253,132 +204,57 @@ pub struct UpdatePolicy<'info> {
 }
 
 #[derive(Accounts)]
-pub struct RemoveFromAllowlist<'info> {
-    pub issuer_authority: Signer<'info>,
-
-    pub mint: InterfaceAccount<'info, Mint>,
-
-    #[account(
-        mut,
-        seeds = [POLICY_SEED, mint.key().as_ref()],
-        bump = policy.bump,
-        has_one = issuer_authority,
-        has_one = mint,
-    )]
-    pub policy: Account<'info, PolicyAccount>,
-
-    /// The holder's token account to freeze.
-    #[account(
-        mut,
-        token::mint = mint,
-        token::authority = wallet,
-    )]
-    pub token_account: InterfaceAccount<'info, TokenAccount>,
-
-    /// The wallet whose token account is being modified.
-    pub wallet: SystemAccount<'info>,
-
-    pub token_program: Program<'info, Token2022>,
-}
-
-#[derive(Accounts)]
-pub struct AddToBlocklist<'info> {
-    pub issuer_authority: Signer<'info>,
-
-    pub mint: InterfaceAccount<'info, Mint>,
-
-    #[account(
-        mut,
-        seeds = [POLICY_SEED, mint.key().as_ref()],
-        bump = policy.bump,
-        has_one = issuer_authority,
-        has_one = mint,
-    )]
-    pub policy: Account<'info, PolicyAccount>,
-
-    /// The holder's token account to freeze.
-    #[account(
-        mut,
-        token::mint = mint,
-        token::authority = wallet,
-    )]
-    pub token_account: InterfaceAccount<'info, TokenAccount>,
-
-    /// The wallet whose token account is being modified.
-    pub wallet: SystemAccount<'info>,
-
-    pub token_program: Program<'info, Token2022>,
-}
-
-#[derive(Accounts)]
-pub struct RemoveFromBlocklist<'info> {
-    pub issuer_authority: Signer<'info>,
-
-    pub mint: InterfaceAccount<'info, Mint>,
-
-    #[account(
-        mut,
-        seeds = [POLICY_SEED, mint.key().as_ref()],
-        bump = policy.bump,
-        has_one = issuer_authority,
-        has_one = mint,
-    )]
-    pub policy: Account<'info, PolicyAccount>,
-
-    /// The wallet being removed from the blocklist.
-    pub wallet: SystemAccount<'info>,
-}
-
-#[derive(Accounts)]
-pub struct ThawTokenAccount<'info> {
-    pub issuer_authority: Signer<'info>,
-
+pub struct VerifyTransfer<'info> {
     pub mint: InterfaceAccount<'info, Mint>,
 
     #[account(
         seeds = [POLICY_SEED, mint.key().as_ref()],
         bump = policy.bump,
-        has_one = issuer_authority,
         has_one = mint,
     )]
     pub policy: Account<'info, PolicyAccount>,
 
-    /// The holder's token account to thaw.
-    #[account(
-        mut,
-        token::mint = mint,
-    )]
-    pub token_account: InterfaceAccount<'info, TokenAccount>,
-
-    pub token_program: Program<'info, Token2022>,
+    pub from_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub to_token_account: InterfaceAccount<'info, TokenAccount>,
 }
-
-// ─── State ───────────────────────────────────────────────────────────────────
 
 #[account]
 pub struct PolicyAccount {
-    /// The SSTS mint this policy governs.
     pub mint: Pubkey,
-    /// Wallet that can update this policy (the token issuer).
     pub issuer_authority: Pubkey,
-    /// Merkle root of the allowlist. [0u8;32] = empty (all blocked by default).
-    pub allowlist_merkle_root: [u8; 32],
-    /// Merkle root of the explicit blocklist.
-    pub blocklist_merkle_root: [u8; 32],
-    /// Running count of allowed wallets (informational).
-    pub total_allowed: u64,
-    /// Running count of blocked wallets (informational).
-    pub total_blocked: u64,
-    /// PDA bump for CPI signing.
+    pub allowlist_mode: bool,
+    pub allowlist: [Pubkey; MAX_LIST_SIZE],
+    pub blocklist: [Pubkey; MAX_LIST_SIZE],
+    pub allowlist_count: u8,
+    pub blocklist_count: u8,
     pub bump: u8,
 }
 
-// ─── Events ──────────────────────────────────────────────────────────────────
+impl PolicyAccount {
+    pub fn is_blocked(&self, wallet: &Pubkey) -> bool {
+        for i in 0..self.blocklist_count as usize {
+            if self.blocklist[i] == *wallet {
+                return true;
+            }
+        }
+        false
+    }
+
+    pub fn is_allowed(&self, wallet: &Pubkey) -> bool {
+        for i in 0..self.allowlist_count as usize {
+            if self.allowlist[i] == *wallet {
+                return true;
+            }
+        }
+        false
+    }
+}
 
 #[event]
 pub struct PolicyCreated {
     pub mint: Pubkey,
     pub issuer_authority: Pubkey,
+    pub allowlist_mode: bool,
 }
 
 #[event]
@@ -395,18 +271,42 @@ pub struct BlocklistUpdated {
     pub action: ListAction,
 }
 
+#[event]
+pub struct WalletBlocked {
+    pub mint: Pubkey,
+    pub wallet: Pubkey,
+}
+
+#[event]
+pub struct WalletUnblocked {
+    pub mint: Pubkey,
+    pub wallet: Pubkey,
+}
+
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub enum ListAction {
     Added,
     Removed,
 }
 
-// ─── Errors ──────────────────────────────────────────────────────────────────
-
 #[error_code]
 pub enum FampError {
     #[msg("Signer is not the issuer authority for this policy")]
     Unauthorized,
-    #[msg("Token account does not belong to the expected mint")]
-    MintMismatch,
+    #[msg("Allowlist is full")]
+    AllowlistFull,
+    #[msg("Blocklist is full")]
+    BlocklistFull,
+    #[msg("Wallet already in allowlist")]
+    AlreadyInAllowlist,
+    #[msg("Wallet already in blocklist")]
+    AlreadyInBlocklist,
+    #[msg("Wallet not found in list")]
+    WalletNotFound,
+    #[msg("Wallet is blocked")]
+    WalletBlocked,
+    #[msg("Wallet is not on the allowlist")]
+    WalletNotAllowlisted,
+    #[msg("Invalid token account data")]
+    InvalidTokenAccount,
 }

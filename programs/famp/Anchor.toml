@@ -15,7 +15,7 @@ famp = "99frBpGJFhSx1qMt64T8HSfZMLUiy5YhZVmnG7X4pk2K"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "https://api.devnet.solana.com"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

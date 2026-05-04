@@ -1,0 +1,30 @@
+{
+  "name": "@tokenforge/sdk",
+  "version": "0.1.0",
+  "description": "Workflow SDK for the Solana Security Token Standard — L1 adapters and L2 workflows on top of canonical SSTS",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check src/",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@solana/kit": "^2.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsup": "^8.3.0",
+    "vitest": "^2.1.0",
+    "@biomejs/biome": "^1.9.0"
+  },
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": ["dist", "src"]
+}
