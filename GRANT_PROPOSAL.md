@@ -1,5 +1,7 @@
 # TokenForge — Solana Foundation Grant Proposal
 
+> **TokenForge is the first issuer platform that makes regulated security tokens work on Solana using the Halborn/Hoodies/Securitize SSTS standard.**
+
 ## Project Overview
 
 **TokenForge** is an open-source issuer tooling platform built on top of the canonical Solana Security Token Standard (SSTS). We provide TypeScript SDK, issuer dashboard, and compliance extensions that make it possible for any team to launch and manage security tokens on Solana without building the integration layer from scratch.

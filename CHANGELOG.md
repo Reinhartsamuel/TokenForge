@@ -123,3 +123,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Feature 1: Added "All 4 programs build successfully" acceptance criterion ✅
 - Feature 2: Added "23 integration tests pass" acceptance criterion ✅
+
+## [1.3.0] - 2026-05-07
+
+### Day 3-5: Dashboard (Hackathon Demo)
+
+#### What Users Can Do TODAY
+
+**✅ Working:**
+1. **Deploy FAMP to devnet** — `./scripts/run-tests.sh deploy` deploys FAMP program (`99frBpGJFhSx1qMt64T8HSfZMLUiy5YhZVmnG7X4pk2K`)
+2. **Run FAMP integration tests** — 23/23 tests pass proving:
+   - Policy creation and `verify_transfer` gating
+   - Blocklist/allowlist management (add/remove/wallet limits)
+   - Policy-oracle pattern (WalletBlocked/WalletUnblocked events)
+   - MAX_LIST_SIZE (16) enforcement
+3. **Build all 4 programs** — FAMP, verification_policy_noop, canonical SSTS, canonical transfer hook all compile
+4. **Connect wallet to dashboard** — Solana wallet adapter working (Phantom/Backpack) on devnet
+5. **Upload token metadata to R2** — Server-side API route generates JSON and uploads to Cloudflare R2
+6. **SDK PDA derivation** — `deriveMintAuthorityPda`, `deriveVerificationConfigPda`, `deriveFampPolicyPda` all work
+7. **SDK instruction builders** — `getInitializeMintInstruction`, `getInitializeVerificationConfigInstruction` produce valid canonical SSTS instructions
+
+**⚠️ Blocked:**
+1. **Create Token via canonical SSTS** — Transaction simulation fails with "An unknown error occurred". Root cause identified: `@solana/kit` v2 uses `role` field for account permissions (0=readonly, 1=writable, 3=signer, 5=writable+signer) but conversion to web3.js v1 `isSigner`/`isWritable` booleans is incorrect. The mint account gets `role: 1` (writable) instead of `role: 5` (writable+signer).
+2. **Mint/Transfer/Pause/Resume** — Depends on Create Token working
+3. **FAMP policy management via dashboard** — UI built but untested on-chain
+
+#### Hackathon Status: 4 Days Remaining
+| Deliverable | Status | Notes |
+|-------------|--------|-------|
+| Programs (FAMP + noop) | ✅ Deployed to devnet | 258KB + 21KB |
+| Canonical SSTS | ✅ Deployed to devnet | 229KB + 70KB |
+| Integration tests | ✅ 23/23 passing | Proves FAMP + Token-2022 compatibility |
+| SDK (L0/L1/L2) | ✅ Builds | PDA derivation + instruction builders work |
+| Dashboard | ⚠️ Partial | Wallet connect + R2 upload work. Token create blocked by SDK role conversion |
+| Demo video | ❌ Not started | Blocked by token create |
+
+#### Added
+- **Dashboard** (`dashboard/`) — Next.js 16 app with shadcn/ui, wallet adapter, R2 upload
+- **Wallet connection** — `@solana/wallet-adapter-react` with devnet support
+- **R2 metadata upload** — `/api/r3-upload` server route for Cloudflare R2 storage
+- **Create Token form** — Uses SDK's canonical SSTS instruction builders (blocked by role conversion)
+- **Mint Tokens form** — Built but untested
+- **FAMP Policy form** — Built but untested

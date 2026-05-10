@@ -14,7 +14,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@solana/kit": "^2.1.0"
+    "@solana/kit": "^2.1.0",
+    "bs58": "^6.0.0"
   },
   "devDependencies": {
     "typescript": "^5.7.0",

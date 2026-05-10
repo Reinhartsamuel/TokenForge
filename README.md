@@ -1,5 +1,7 @@
 # TokenForge
 
+> **TokenForge is the first issuer platform that makes regulated security tokens work on Solana using the Halborn/Hoodies/Securitize SSTS standard.**
+>
 > Canonical-first issuer tooling for the Solana Security Token Standard (SSTS)
 
 TokenForge is a developer and operator platform for launching and managing security tokens on Solana. We build on top of the [canonical Solana Security Token Standard](https://github.com/solana-foundation/security-token-standard) — not alongside it — to deliver SDK, dashboard, and compliance extensions that make institutional-grade token issuance accessible to any team.

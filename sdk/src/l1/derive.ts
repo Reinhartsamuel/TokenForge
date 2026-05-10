@@ -2,15 +2,17 @@
  * L1 — PDA Derivation Helpers
  *
  * Derives canonical SSTS and FAMP account addresses from known seeds.
- * All functions use @solana/kit's address derivation utilities.
+ * Address strings are decoded to raw bytes before being used as PDA seeds,
+ * since @solana/kit enforces a 32-byte maximum per seed.
  */
 
 import {
-  getAddressEncoder,
   getProgramDerivedAddress,
   type Address,
   type ProgramDerivedAddress,
 } from '@solana/kit';
+import bs58 from 'bs58';
+import bs58 from 'bs58';
 import {
   SSTS_PROGRAM_ID,
   TRANSFER_HOOK_PROGRAM_ID,
@@ -19,6 +21,10 @@ import {
 import { FAMP_POLICY_SEED } from '../utils/types';
 
 const VERIFICATION_CONFIG_SEED = 'verification_config';
+
+function addressBytes(addr: Address): Uint8Array {
+  return bs58.decode(addr);
+}
 
 /**
  * Derive the VerificationConfig PDA for a given mint + instruction discriminator.
@@ -34,7 +40,7 @@ export async function deriveVerificationConfigPda(
     programAddress,
     seeds: [
       VERIFICATION_CONFIG_SEED,
-      mint,
+      addressBytes(mint),
       new Uint8Array([instructionDiscriminator]),
     ],
   });
@@ -43,7 +49,7 @@ export async function deriveVerificationConfigPda(
 /**
  * Derive the MintAuthority PDA for a given mint + creator.
  *
- * Seed: [b"mint_authority", mint_pubkey, creator_pubkey]
+ * Seed: [b"mint.authority", mint_pubkey, creator_pubkey]
  */
 export async function deriveMintAuthorityPda(
   mint: Address,
@@ -52,7 +58,7 @@ export async function deriveMintAuthorityPda(
 ): Promise<ProgramDerivedAddress> {
   return getProgramDerivedAddress({
     programAddress,
-    seeds: ['mint_authority', mint, creator],
+    seeds: ['mint.authority', addressBytes(mint), addressBytes(creator)],
   });
 }
 
@@ -68,7 +74,7 @@ export async function deriveRateAccountPda(
 ): Promise<ProgramDerivedAddress> {
   return getProgramDerivedAddress({
     programAddress,
-    seeds: ['rate', mint, actionId],
+    seeds: ['rate', addressBytes(mint), actionId],
   });
 }
 
@@ -84,22 +90,22 @@ export async function deriveProofAccountPda(
 ): Promise<ProgramDerivedAddress> {
   return getProgramDerivedAddress({
     programAddress,
-    seeds: ['proof', mint, claimant],
+    seeds: ['proof', addressBytes(mint), addressBytes(claimant)],
   });
 }
 
 /**
- * Derive the FAMP PolicyAccount PDA for a given mint.
+ * Derive the FreezeAuthority PDA for a given mint.
  *
- * Seed: [b"famp_policy", mint_pubkey]
+ * Seed: [b"mint.freeze_authority", mint_pubkey]
  */
-export async function deriveFampPolicyPda(
+export async function deriveFreezeAuthorityPda(
   mint: Address,
-  programAddress: Address = FAMP_PROGRAM_ID
+  programAddress: Address = SSTS_PROGRAM_ID
 ): Promise<ProgramDerivedAddress> {
   return getProgramDerivedAddress({
     programAddress,
-    seeds: [FAMP_POLICY_SEED, mint],
+    seeds: ['mint.freeze_authority', addressBytes(mint)],
   });
 }
 
@@ -120,16 +126,15 @@ export async function deriveAllTokenPdas(
     programAddress
   );
 
-  // Derive verification configs for key instructions
   const keyInstructions = [
-    2, // InitializeVerificationConfig
-    3, // UpdateVerificationConfig
-    6, // Mint
-    12, // Transfer
-    8, // Pause
-    9, // Resume
-    10, // Freeze
-    11, // Thaw
+    2,
+    3,
+    6,
+    12,
+    8,
+    9,
+    10,
+    11,
   ];
 
   const verificationConfigs: Record<number, ProgramDerivedAddress> = {};

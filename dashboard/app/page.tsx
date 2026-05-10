@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { CreateTokenForm } from "@/components/create-token-form";
+import { MintTokenForm } from "@/components/mint-token-form";
+import { TransferTokenForm } from "@/components/transfer-token-form";
 import { FampPolicyForm } from "@/components/famp-policy-form";
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState<"create" | "mint" | "policy">("create");
+  const [activeTab, setActiveTab] = useState<"create" | "mint" | "transfer" | "policy">("create");
 
   return (
     <div className="container mx-auto p-8 max-w-4xl">
@@ -29,6 +31,12 @@ export default function DashboardPage() {
           Mint Tokens
         </Button>
         <Button
+          variant={activeTab === "transfer" ? "default" : "ghost"}
+          onClick={() => setActiveTab("transfer")}
+        >
+          Transfer
+        </Button>
+        <Button
           variant={activeTab === "policy" ? "default" : "ghost"}
           onClick={() => setActiveTab("policy")}
         >
@@ -38,9 +46,8 @@ export default function DashboardPage() {
 
       <main className="p-6 bg-slate-900 rounded-lg border border-slate-800">
         {activeTab === "create" && <CreateTokenForm />}
-        {activeTab === "mint" && (
-          <div className="text-slate-400">Mint form coming in Day 5</div>
-        )}
+        {activeTab === "mint" && <MintTokenForm />}
+        {activeTab === "transfer" && <TransferTokenForm />}
         {activeTab === "policy" && <FampPolicyForm />}
       </main>
     </div>

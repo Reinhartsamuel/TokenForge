@@ -1,6 +1,6 @@
 # TokenForge — Investor Brief
 
-> **Canonical-first issuer tooling for the Solana Security Token Standard**
+> **TokenForge is the first issuer platform that makes regulated security tokens work on Solana using the Halborn/Hoodies/Securitize SSTS standard.**
 > Stage: Hackathon → Pre-seed | Built: April–May 2026
 
 ## Executive Summary

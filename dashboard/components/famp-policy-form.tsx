@@ -6,27 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { useSdkRpc, useSdkSigner, useWalletAddress } from "@/lib/sdk-bridge";
-import { createFampPolicy } from "@tokenforge/sdk";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
-import { AnchorProvider, Program } from "@coral-xyz/anchor";
-import type { IdlTypes } from "@coral-xyz/anchor";
-
-// FAMP IDL type
-interface FampIdl {
-  address: string;
-  metadata: { name: string; version: string };
-  instructions: Array<{ name: string; accounts: any[]; args: any[] }>;
-}
 
 const FAMP_PROGRAM_ID = "99frBpGJFhSx1qMt64T8HSfZMLUiy5YhZVmnG7X4pk2K";
 const POLICY_SEED = "famp_policy";
 
 export function FampPolicyForm() {
-  const { connected, wallet, signTransaction } = useWallet();
+  const { connected, signTransaction } = useWallet();
   const { connection } = useConnection();
-  const { rpc } = useSdkRpc();
-  const walletAddress = useWalletAddress();
+  const publicKey = useWallet().publicKey;
 
   const [loading, setLoading] = useState(false);
   const [mintAddress, setMintAddress] = useState("");
@@ -36,7 +24,7 @@ export function FampPolicyForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!connected || !walletAddress) {
+    if (!connected || !publicKey) {
       setResult("Please connect your wallet first");
       return;
     }
@@ -54,9 +42,8 @@ export function FampPolicyForm() {
       );
 
       // Build FAMP instruction manually (Anchor program)
-      const discriminator = Buffer.from([
-        0x1f, 0x6b, 0x4c, 0x5c, 0x6a, 0x3d, 0x7e, 0x2f,
-      ]); // create_policy discriminator
+      // Discriminator from IDL: create_policy = [27, 81, 33, 27, 196, 103, 246, 53]
+      const discriminator = Buffer.from([27, 81, 33, 27, 196, 103, 246, 53]);
 
       const instructionData = Buffer.concat([
         discriminator,
@@ -66,7 +53,7 @@ export function FampPolicyForm() {
       const createPolicyIx = {
         programId: new PublicKey(FAMP_PROGRAM_ID),
         keys: [
-          { pubkey: new PublicKey(walletAddress), isSigner: true, isWritable: true },
+          { pubkey: publicKey, isSigner: true, isWritable: true },
           { pubkey: mintPubkey, isSigner: false, isWritable: false },
           { pubkey: policyPda, isSigner: false, isWritable: true },
           { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
@@ -75,11 +62,11 @@ export function FampPolicyForm() {
       };
 
       const tx = new Transaction().add(createPolicyIx);
-      tx.feePayer = new PublicKey(walletAddress);
+      tx.feePayer = publicKey;
 
       // Get recent blockhash
-      const { value } = await rpc.getLatestBlockhash().send();
-      tx.recentBlockhash = value.blockhash;
+      const { blockhash } = await connection.getLatestBlockhash();
+      tx.recentBlockhash = blockhash;
 
       if (!signTransaction) {
         throw new Error("Wallet does not support signing");

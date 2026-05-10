@@ -1,5 +1,7 @@
 # TokenForge — Solana Frontier Hackathon Submission
 
+> **TokenForge is the first issuer platform that makes regulated security tokens work on Solana using the Halborn/Hoodies/Securitize SSTS standard.**
+>
 > **Category:** Developer Tooling / RWA Infrastructure
 > **Build period:** April – May 2026
 > **Status:** Active development (v1.2.0)
