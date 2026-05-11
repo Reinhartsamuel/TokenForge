@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Keypair, PublicKey, Connection, Transaction } from "@solana/web3.js";
-import { createNoopSigner } from "@solana/kit";
+import { Keypair, PublicKey, Connection, Transaction, TransactionInstruction, SystemProgram } from "@solana/web3.js";
 import type { Address } from "@solana/kit";
 import {
   getAssociatedTokenAddressSync,
@@ -9,10 +8,10 @@ import {
 import {
   deriveMintAuthorityPda,
   deriveVerificationConfigPda,
+  derivePermanentDelegatePda,
+  deriveTransferHookPda,
 } from "@/lib/sdk/l1/derive";
 import {
-  getMintInstruction,
-  getInitializeVerificationConfigInstruction,
   TOKEN_2022_PROGRAM_ID,
   SYSTEM_PROGRAM_ID,
   INSTRUCTIONS_SYSVAR_ID,
@@ -20,7 +19,6 @@ import {
   NOOP_VERIFICATION_PROGRAM_ID,
   TRANSFER_HOOK_PROGRAM_ID,
 } from "@/lib/sdk";
-import { canonicalIxToWeb3 } from "@/lib/sdk/l1/transactions";
 
 const DEVNET_RPC = "https://api.devnet.solana.com";
 const TOKEN_2022_PK = new PublicKey(TOKEN_2022_PROGRAM_ID);
@@ -46,11 +44,11 @@ export async function POST(req: NextRequest) {
     const creatorAddress = payerKeypair.publicKey.toBase58() as Address;
 
     const body = await req.json();
-    const { mintAddress: mintStr, destination: destStr, amount: amountStr } = body;
+    const { mintAddress: mintStr, source: sourceStr, recipient: recipientStr, amount: amountStr } = body;
 
-    if (!mintStr || !amountStr) {
+    if (!mintStr || !amountStr || !recipientStr) {
       return NextResponse.json(
-        { error: "mintAddress and amount are required" },
+        { error: "mintAddress, amount, and recipient are required" },
         { status: 400 }
       );
     }
@@ -59,9 +57,10 @@ export async function POST(req: NextRequest) {
     const mintAddress = mintStr as Address;
     const mintPubkey = new PublicKey(mintAddress);
 
-    // Destination defaults to payer wallet if not provided
-    const destAddress = (destStr || payerKeypair.publicKey.toBase58()) as Address;
-    const destPubkey = new PublicKey(destAddress);
+    // Source defaults to payer wallet if not provided
+    const sourceAddress = (sourceStr || payerKeypair.publicKey.toBase58()) as Address;
+    const sourcePubkey = new PublicKey(sourceAddress);
+    const recipientPubkey = new PublicKey(recipientStr);
 
     // Derive PDAs
     const [mintAuthorityPda] = await deriveMintAuthorityPda(
@@ -71,14 +70,31 @@ export async function POST(req: NextRequest) {
     );
     const [verificationConfigPda] = await deriveVerificationConfigPda(
       mintAddress,
-      6, // Mint discriminator
+      12, // Transfer discriminator
       SSTS_PROGRAM_ID
     );
+    const [permanentDelegatePda] = await derivePermanentDelegatePda(
+      mintAddress,
+      SSTS_PROGRAM_ID
+    );
+    const [transferHookPda] = await deriveTransferHookPda(
+      mintAddress,
+      SSTS_PROGRAM_ID
+    );
+
+    // Get or create source ATA
+    const sourceAta = getAssociatedTokenAddressSync(
+      mintPubkey,
+      sourcePubkey,
+      false,
+      TOKEN_2022_PK
+    );
+    const sourceAtaExists = await connection.getAccountInfo(sourceAta);
 
     // Get or create destination ATA
     const destAta = getAssociatedTokenAddressSync(
       mintPubkey,
-      destPubkey,
+      recipientPubkey,
       false,
       TOKEN_2022_PK
     );
@@ -88,63 +104,56 @@ export async function POST(req: NextRequest) {
     const decimals = parseInt(body.decimals || "6");
     const amountRaw = BigInt(Math.floor(parseFloat(amountStr) * 10 ** decimals));
 
-    // Build canonical instructions
-    const payerSigner = createNoopSigner(creatorAddress);
+    // Always include InitializeVerificationConfig for disc 12
+    // The SSTS program will skip if already exists (AccountAlreadyInitialized)
+    // Build Transfer instruction manually with web3.js
+    const discriminator = Buffer.from([12]);
+    const amountBytes = Buffer.alloc(8);
+    amountBytes.writeBigUInt64LE(BigInt(amountRaw));
+    const instructionData = Buffer.concat([discriminator, amountBytes]);
 
-    // Check if VerificationConfig for discriminator 6 exists
-    const vcExists = await connection.getAccountInfo(new PublicKey(verificationConfigPda));
-
-    let web3InitVcIx = null;
-    if (!vcExists) {
-      const initVcIx = getInitializeVerificationConfigInstruction({
-        mint: mintAddress,
-        verificationConfigOrMintAuthority: mintAuthorityPda,
-        instructionsSysvarOrCreator: creatorAddress,
-        payer: payerSigner,
-        mintAccount: mintAddress,
-        configAccount: verificationConfigPda,
-        systemProgram: SYSTEM_PROGRAM_ID,
-        transferHookPda: TRANSFER_HOOK_PROGRAM_ID,
-        transferHookProgram: TRANSFER_HOOK_PROGRAM_ID,
-        initializeVerificationConfigArgs: {
-          instructionDiscriminator: 6,
-          cpiMode: true,
-          programAddresses: [NOOP_VERIFICATION_PROGRAM_ID],
-        },
-      } as any);
-      web3InitVcIx = canonicalIxToWeb3(initVcIx);
-    }
-
-    const mintIx = getMintInstruction({
-      mint: mintAddress,
-      verificationConfig: verificationConfigPda,
-      instructionsSysvar: INSTRUCTIONS_SYSVAR_ID,
-      mintAuthority: mintAuthorityPda,
-      mintAccount: mintAddress,
-      destination: destAta.toBase58(),
-      tokenProgram: TOKEN_2022_PROGRAM_ID,
-      amount: amountRaw,
-    } as any);
-
-    const web3MintIx = canonicalIxToWeb3(mintIx);
+    const web3TransferIx = new TransactionInstruction({
+      programId: new PublicKey(SSTS_PROGRAM_ID),
+      keys: [
+        { pubkey: new PublicKey(mintAddress), isSigner: false, isWritable: false },
+        { pubkey: new PublicKey(verificationConfigPda), isSigner: false, isWritable: false },
+        { pubkey: new PublicKey("Sysvar1nstructions1111111111111111111111111"), isSigner: false, isWritable: false },
+        { pubkey: new PublicKey(permanentDelegatePda), isSigner: false, isWritable: false },
+        { pubkey: new PublicKey(mintAddress), isSigner: false, isWritable: false },
+        { pubkey: sourceAta, isSigner: false, isWritable: true },
+        { pubkey: destAta, isSigner: false, isWritable: true },
+        { pubkey: new PublicKey(TRANSFER_HOOK_PROGRAM_ID), isSigner: false, isWritable: false },
+        { pubkey: new PublicKey(TOKEN_2022_PROGRAM_ID), isSigner: false, isWritable: false },
+        { pubkey: new PublicKey(NOOP_VERIFICATION_PROGRAM_ID), isSigner: false, isWritable: false },
+      ],
+      data: instructionData,
+    });
 
     // Build transaction
     const tx = new Transaction();
-    if (!destAtaExists) {
+    if (!sourceAtaExists) {
       tx.add(
         createAssociatedTokenAccountInstruction(
           payerKeypair.publicKey,
-          destAta,
-          destPubkey,
+          sourceAta,
+          sourcePubkey,
           mintPubkey,
           TOKEN_2022_PK
         )
       );
     }
-    if (web3InitVcIx) {
-      tx.add(web3InitVcIx);
+    if (!destAtaExists) {
+      tx.add(
+        createAssociatedTokenAccountInstruction(
+          payerKeypair.publicKey,
+          destAta,
+          recipientPubkey,
+          mintPubkey,
+          TOKEN_2022_PK
+        )
+      );
     }
-    tx.add(web3MintIx);
+    tx.add(web3TransferIx);
     tx.feePayer = payerKeypair.publicKey;
     const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
     tx.recentBlockhash = blockhash;
@@ -159,6 +168,17 @@ export async function POST(req: NextRequest) {
           error: "Simulation failed",
           details: simResult.value.err,
           logs: simResult.value.logs,
+          debugInfo: {
+            mintAuthorityPda,
+            permanentDelegatePda,
+            verificationConfigPda,
+          },
+          debugKeys: web3TransferIx.keys.map((k: any, i: number) => ({
+            index: i,
+            pubkey: k.pubkey.toBase58(),
+            isSigner: k.isSigner,
+            isWritable: k.isWritable,
+          })),
         },
         { status: 400 }
       );
@@ -179,14 +199,13 @@ export async function POST(req: NextRequest) {
       success: true,
       signature,
       mint: mintAddress,
+      source: sourceAta.toBase58(),
       destination: destAta.toBase58(),
       amount: amountStr,
-      mintAuthorityPda: mintAuthorityPda,
-      verificationConfigPda: verificationConfigPda,
       explorerUrl: `https://explorer.solana.com/tx/${signature}?cluster=devnet`,
     });
   } catch (error: any) {
-    console.error("[api/mint-tokens] Error:", error);
+    console.error("[api/transfer-tokens] Error:", error);
     return NextResponse.json(
       {
         error: error.message || "Unknown error",

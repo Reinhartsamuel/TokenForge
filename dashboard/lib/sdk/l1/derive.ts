@@ -127,6 +127,52 @@ export async function deriveFampPolicyPda(
 }
 
 /**
+ * Derive the PermanentDelegate PDA for a given mint.
+ *
+ * Seed: [b"mint.permanent_delegate", mint_pubkey]
+ */
+export async function derivePermanentDelegatePda(
+  mint: Address,
+  programAddress: Address = SSTS_PROGRAM_ID
+): Promise<ProgramDerivedAddress> {
+  return getProgramDerivedAddress({
+    programAddress,
+    seeds: ['mint.permanent_delegate', addressBytes(mint)],
+  });
+}
+
+/**
+ * Derive the TransferHook PDA for a given mint.
+ *
+ * Seed: [b"mint.transfer_hook", mint_pubkey]
+ */
+export async function deriveTransferHookPda(
+  mint: Address,
+  programAddress: Address = SSTS_PROGRAM_ID
+): Promise<ProgramDerivedAddress> {
+  return getProgramDerivedAddress({
+    programAddress,
+    seeds: ['mint.transfer_hook', addressBytes(mint)],
+  });
+}
+
+/**
+ * Derive the ExtraAccountMetas PDA for a given mint.
+ *
+ * Seed: [b"extra-account-metas", mint_pubkey]
+ * Program: TRANSFER_HOOK_PROGRAM_ID
+ */
+export async function deriveExtraAccountMetasPda(
+  mint: Address,
+  programAddress: Address = TRANSFER_HOOK_PROGRAM_ID
+): Promise<ProgramDerivedAddress> {
+  return getProgramDerivedAddress({
+    programAddress,
+    seeds: ['extra-account-metas', addressBytes(mint)],
+  });
+}
+
+/**
  * Derive all PDAs needed for a new token initialization in one call.
  */
 export async function deriveAllTokenPdas(

@@ -20,6 +20,17 @@ import { canonicalIxToWeb3 } from "@/lib/sdk/l1/transactions";
 
 const DEVNET_RPC = "https://api.devnet.solana.com";
 
+async function getDb() {
+  if (!process.env.DATABASE_URL) return null;
+  try {
+    const { db } = await import("@/lib/db");
+    const { tokens, transactions } = await import("@/db/schema");
+    return { db, tokens, transactions };
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const keypairBase64 = process.env.TEST_WALLET_KEYPAIR;
@@ -200,6 +211,46 @@ export async function POST(req: NextRequest) {
         },
         { status: 500 }
       );
+    }
+
+    const dbClient = await getDb();
+    if (dbClient) {
+      try {
+        const { db, tokens, transactions } = dbClient;
+        const [tokenResult] = await db
+          .insert(tokens)
+          .values({
+            mintAddress,
+            name,
+            symbol,
+            decimals,
+            mintAuthorityPda,
+            freezeAuthorityPda,
+            verificationConfigPda: transferVerificationConfigPda,
+            creatorAddress,
+            network: "devnet",
+            status: "active",
+          })
+          .returning();
+
+        if (tokenResult) {
+          await db.insert(transactions).values({
+            tokenId: tokenResult.id,
+            signature,
+            type: "create",
+            status: "confirmed",
+            fromAddress: creatorAddress,
+            metadata: {
+              mintAuthorityPda,
+              freezeAuthorityPda,
+              verificationConfigPda: transferVerificationConfigPda,
+            },
+            explorerUrl: `https://explorer.solana.com/tx/${signature}?cluster=devnet`,
+          });
+        }
+      } catch (dbError) {
+        console.error("[api] DB write error (non-fatal):", dbError);
+      }
     }
 
     return NextResponse.json({

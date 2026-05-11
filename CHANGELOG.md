@@ -5,6 +5,81 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-05-11
+
+### SaaS Dashboard Transformation with PostgreSQL
+
+#### Added
+
+- **PostgreSQL Database** — Railway-hosted PostgreSQL with Drizzle ORM for persistent token, transaction, policy, and distribution records
+- **Database Schema** — 6 tables: `tokens`, `transactions`, `famp_policies`, `famp_policy_entries`, `distributions`, `distribution_claims`
+- **Database API Routes** — CRUD endpoints for tokens (`/api/tokens`), transactions (`/api/transactions`), and stats (`/api/stats`)
+- **Sidebar Navigation** — Replaced 5-tab interface with professional SaaS-style sidebar using shadcn/ui `SidebarProvider`
+- **Overview Dashboard** — KPI cards (Total Tokens, Active Policies, Distributions, Transactions), recent activity table, quick actions
+- **Token Management Pages** — List view with search/filter, create wizard (3-step), detail page with transaction history and policy tabs
+- **Policy Management Pages** — List view, dual-column allowlist/blocklist management with add/remove
+- **Distribution Pages** — List view, create form, detail page with claim history
+- **Activity Page** — Full transaction log with search, filter by type, and explorer links
+- **Settings Page** — Network configuration, RPC endpoint, storage status
+- **Address Label Component** — Truncated address display with copy-to-clipboard and tooltip showing full address
+- **Status Badge Component** — Consistent status badges across all pages (active/paused/frozen/confirmed/failed/etc.)
+- **Database Integration in API Routes** — Existing `/api/test-create-token`, `/api/mint-tokens`, and `/api/distribution` routes now write to PostgreSQL after successful on-chain transactions
+- **Drizzle CLI Scripts** — `db:generate`, `db:migrate`, `db:studio` for database management
+
+#### Changed
+
+- **Dashboard Layout** — From single-page tabs to multi-page SaaS architecture with sidebar navigation
+- **Color Palette** — Updated to security blue theme: Primary `#0369A1`, Secondary `#0EA5E9`, CTA `#22C55E`
+- **Create Token Form** — Replaced single form with 3-step wizard (Details → Metadata → Deploy)
+- **Error Handling** — Toast notifications via `sonner` instead of console-like result text
+- **Database writes are non-fatal** — All DB operations wrapped in try/catch so on-chain transactions succeed even if DB write fails
+
+#### Technical
+
+- **Dependencies Added**: `drizzle-orm`, `postgres`, `sonner`, `drizzle-kit`
+- **New shadcn/ui Components**: `sidebar`, `table`, `card`, `badge`, `dialog`, `dropdown-menu`, `tabs`, `separator`, `scroll-area`, `skeleton`, `tooltip`
+- **Fixed**: Drizzle ORM query builder type mismatches (conditional branching instead of variable reassignment)
+- **Fixed**: `@base-ui/react` component compatibility (removed unsupported `asChild` props)
+- **Fixed**: Removed non-existent `TokenforgeIcon` import from lucide-react
+
+## [1.5.0] - 2026-05-11
+
+### Distribution + Dashboard 5-Tab Completion + Bug Fix
+
+#### What's Working Now
+
+**✅ All Token Operations on Devnet via Backend Keypair Signer:**
+1. **Create Token** — `/api/test-create-token` creates canonical SSTS security tokens (Token-2022 with all extensions)
+2. **Mint Tokens** — `/api/mint-tokens` mints tokens to any destination ATA (auto-creates if missing)
+3. **Transfer Tokens** — `/api/transfer-tokens` transfers between ATAs with SSTS verification
+4. **FAMP Policy Management** — `/api/famp-policy` supports: create policy, add/remove from allowlist, add/remove from blocklist, get policy state
+5. **Distribution** — `/api/distribution` supports CreateDistributionEscrow (discriminator 20) and ClaimDistribution (discriminator 21) with Merkle proof verification
+6. **FAMP UI** — `FampPolicyForm` with tabbed interface (Create Policy, Allowlist, Blocklist)
+7. **Distribution UI** — `DistributionForm` with tabbed interface (Create Escrow, Claim Distribution)
+8. **Mint UI** — `MintTokenForm` wired to backend API
+9. **Transfer UI** — `TransferTokenForm` wired to backend API
+10. **Dashboard** — 5 tabs: Create Token, Mint Tokens, Transfer, FAMP Policy, Distribution
+
+#### Added
+
+- **`/api/distribution/route.ts`** — Server-side endpoint for CreateDistributionEscrow (discriminator 20) and ClaimDistribution (discriminator 21) with Merkle proof support
+- **`DistributionForm`** component with two tabs: Create Escrow and Claim Distribution
+- **Distribution tab** wired into dashboard page, completing the 5-tab interface
+
+#### Fixed
+
+- **`explorerUrl` → `signature` prop mismatch in `TransactionResult`** — All 4 forms (mint, transfer, FAMP, distribution) were passing `explorerUrl` as the `signature` prop, causing explorer links to be broken. Fixed to pass the correct `signature` value.
+
+#### Dashboard Tabs
+
+| Tab | Status |
+|-----|--------|
+| Create Token | ✅ |
+| Mint Tokens | ✅ |
+| Transfer | ✅ |
+| FAMP Policy | ✅ |
+| Distribution | ✅ |
+
 ## [1.0.0] - 2026-04-30
 
 ### Canonical-First Migration
@@ -165,3 +240,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Create Token form** — Uses SDK's canonical SSTS instruction builders (blocked by role conversion)
 - **Mint Tokens form** — Built but untested
 - **FAMP Policy form** — Built but untested
+
+## [1.4.0] - 2026-05-11
+
+### Day 1-2: Dashboard Backend Signer + Full SSTS Lifecycle on Devnet
+
+#### What's Working Now
+
+**✅ All Token Operations on Devnet via Backend Keypair Signer:**
+1. **Create Token** — `/api/test-create-token` creates canonical SSTS security tokens (Token-2022 with all extensions)
+2. **Mint Tokens** — `/api/mint-tokens` mints tokens to any destination ATA (auto-creates if missing)
+3. **Transfer Tokens** — `/api/transfer-tokens` transfers between ATAs with SSTS verification
+4. **FAMP Policy Management** — `/api/famp-policy` supports: create policy, add/remove from allowlist, add/remove from blocklist, get policy state
+5. **FAMP UI** — `FampPolicyForm` with tabbed interface (Create Policy, Allowlist, Blocklist)
+6. **Mint UI** — `MintTokenForm` wired to backend API
+7. **Transfer UI** — `TransferTokenForm` wired to backend API
+
+#### Devnet Deployments
+
+| Program | Program ID | Status |
+|---------|-----------|--------|
+| Canonical SSTS | `SSTS8Qk2bW3aVaBEsY1Ras95YdbaaYQQx21JWHxvjap` | ✅ Deployed |
+| Transfer Hook | `HookXqLKgPaNrHBJ9Jui7oQZz93vMbtA88JjsLa8bmfL` | ✅ Deployed |
+| NOOP Verifier | `5gPMypQiHYVmx3jFJAGr72wrB7f1bgmud3mHtpHUGyLd` | ✅ Deployed |
+| FAMP Policy | `99frBpGJFhSx1qMt64T8HSfZMLUiy5YhZVmnG7X4pk2K` | ✅ Deployed |
+
+#### Confirmed Transactions
+
+| Operation | Signature |
+|-----------|-----------|
+| Create Token | `28HmyWKS8QRJs5tqcsAe7UPiFiBkdfA4kPjX8PKXAd1W7NajgsrVCCdrnvrkuQNTEWg8adtzcTd1jCFaDtFTrm9y` |
+| Mint 1000 tokens | `3ZUQo5mSt4qTPkjYZvhfnATtgGiEhTLfm8w1bpZnm2ymr99YMozARCteQNRQ6MyJZD1x9X3kuhhrPa1fcyrULSCy` |
+| FAMP Create Policy | `a75JTah6y3tYiAwErKW7uXbsH9frNJZYeegJLEepcRXozZtX92ANYtrLBtVQSkXNebsMBXfcRGzpnJeKhJDNjBp` |
+| FAMP Add to Allowlist | `5M6zgij8fURQqnaVmqnyD9pvq3BwHFSWNU7Y8zhx1BUyvDJxg8WAz8JGqogftPE283MvRcCsodi5nm17YnRFix6Y` |
+| Init VC (Transfer) | `5hJbBUQo8m5DTwG2Hzck5Rn2J35vXNHqsEYp1t7mc18HVsyRvFUED55XbCELtQBun93Qtc11oSDrUmqDiKpkminT` |
+| Transfer 100 tokens | `5eEvBhtacM4ezuhG48R3U1aLsofArqC24h7qv6xCf56T9zMojqihaT2cKFxxy4CZJR8WaDVeExytqfDdoRhZA8g` |
+
+#### Added
+
+- **Backend keypair signer pattern** — All API routes use `TEST_WALLET_KEYPAIR` from `.env` instead of wallet adapter
+- `/api/mint-tokens` — Mint tokens with auto ATA creation, NOOP verifier as remaining account
+- `/api/famp-policy` — Full CRUD for FAMP allowlist/blocklist management
+- `/api/transfer-tokens` — Transfer tokens with SSTS verification (manual instruction building)
+- `/api/init-vc-transfer` — Initialize VerificationConfig for Transfer (discriminator 12)
+- `MintTokenForm` — Rewired to backend API
+- `TransferTokenForm` — Rewired to backend API
+- `FampPolicyForm` — New tabbed component with policy state display
+- `derivePermanentDelegatePda`, `deriveTransferHookPda`, `deriveExtraAccountMetasPda` — New PDA derivation helpers
+
+#### Fixed
+
+- **FAMP discriminators** — Anchor 0.31.x uses `global:name` SHA-256 prefix for instruction discriminators
+- **NOOP verifier deployed** — Mint was failing with `VerificationProgramNotFound`; deployed `verification_policy_noop` to devnet
+- **Mint instruction** — Added NOOP verifier as remaining account to satisfy SSTS `verify_by_programs`
+- **`canonicalIxToWeb3` limitation** — Does NOT correctly set `isWritable` for TransactionSigner accounts. All SSTS instructions now built manually with explicit web3.js `TransactionInstruction` for correct account flags
+- **InitVC account structure** — Requires ExtraAccountMetas PDA + TransferHook PDA + TransferHook program for Transfer discriminator
+
+#### Architecture
+
+- Manual instruction building pattern: All SSTS instructions now use raw `TransactionInstruction` with explicit account flags instead of `canonicalIxToWeb3`
+- VerificationConfig per discriminator: Each SSTS instruction (Mint=6, Transfer=12, etc.) requires its own VerificationConfig PDA

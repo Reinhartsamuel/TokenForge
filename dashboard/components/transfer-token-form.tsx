@@ -4,133 +4,53 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { PublicKey, Transaction } from "@solana/web3.js";
-import {
-  getAssociatedTokenAddressSync,
-  createAssociatedTokenAccountInstruction,
-} from "@solana/spl-token";
-import { deriveVerificationConfigPda } from "@/lib/sdk/l1/derive";
-import { getTransferInstruction } from "@/lib/sdk";
-import { canonicalIxToWeb3 } from "@/lib/sdk/l1/transactions";
 import { TransactionResult } from "@/components/ui/transaction-result";
-import { TOKEN_2022_PROGRAM_ID, SSTS_PROGRAM_ID, TRANSFER_HOOK_PROGRAM_ID } from "@/lib/sdk";
-import type { Address } from "@solana/kit";
-
-const TOKEN_2022_PK = new PublicKey(TOKEN_2022_PROGRAM_ID);
 
 export function TransferTokenForm() {
-  const { connected, publicKey, signTransaction } = useWallet();
-  const { connection } = useConnection();
-
   const [mintAddress, setMintAddress] = useState("");
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
   const [success, setSuccess] = useState(false);
+  const [signature, setSignature] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!connected || !publicKey || !signTransaction) {
-      setResult("Please connect your wallet first");
-      return;
-    }
     if (!mintAddress || !recipient || !amount) {
       setResult("All fields are required");
+      setSuccess(false);
       return;
     }
 
     setLoading(true);
     setResult("");
     setSuccess(false);
+    setSignature("");
 
     try {
-      const mintPubkey = new PublicKey(mintAddress);
-      const mintAddressStr = mintPubkey.toBase58();
-      const recipientPubkey = new PublicKey(recipient);
+      const res = await fetch("/api/transfer-tokens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mintAddress,
+          recipient,
+          amount,
+        }),
+      });
 
-      const [verificationConfigPda] = await deriveVerificationConfigPda(
-        mintAddressStr as Address,
-        12,
-        SSTS_PROGRAM_ID
-      );
+      const data = await res.json();
 
-      const sourceAta = getAssociatedTokenAddressSync(
-        mintPubkey,
-        publicKey,
-        false,
-        TOKEN_2022_PK
-      );
-
-      const destAta = getAssociatedTokenAddressSync(
-        mintPubkey,
-        recipientPubkey,
-        false,
-        TOKEN_2022_PK
-      );
-
-      const sourceAtaExists = await connection.getAccountInfo(sourceAta);
-      const destAtaExists = await connection.getAccountInfo(destAta);
-
-      const amountRaw = BigInt(Math.floor(parseFloat(amount) * 10 ** 6));
-
-      const transferIx = getTransferInstruction({
-        mint: mintAddressStr,
-        verificationConfig: verificationConfigPda,
-        instructionsSysvar: "Sysvar1nstructions1111111111111111111111111",
-        permanentDelegateAuthority: publicKey.toBase58(),
-        mintAccount: mintAddressStr,
-        fromTokenAccount: sourceAta.toBase58(),
-        toTokenAccount: destAta.toBase58(),
-        transferHookProgram: TRANSFER_HOOK_PROGRAM_ID,
-        tokenProgram: TOKEN_2022_PROGRAM_ID,
-        amount: amountRaw,
-      } as any);
-
-      const web3TransferIx = canonicalIxToWeb3(transferIx);
-
-      const tx = new Transaction();
-      if (!sourceAtaExists) {
-        tx.add(
-          createAssociatedTokenAccountInstruction(
-            publicKey,
-            sourceAta,
-            publicKey,
-            mintPubkey,
-            TOKEN_2022_PK
-          )
-        );
+      if (!res.ok) {
+        setResult(`Error: ${data.error}${data.details ? ` (${JSON.stringify(data.details)})` : ""}`);
+        setSuccess(false);
+        return;
       }
-      if (!destAtaExists) {
-        tx.add(
-          createAssociatedTokenAccountInstruction(
-            publicKey,
-            destAta,
-            recipientPubkey,
-            mintPubkey,
-            TOKEN_2022_PK
-          )
-        );
-      }
-      tx.add(web3TransferIx);
-      tx.feePayer = publicKey;
-      const { blockhash, lastValidBlockHeight} = await connection.getLatestBlockhash();
-      tx.recentBlockhash = blockhash;
-
-      const signedTx = await signTransaction(tx);
-      const signature = await connection.sendRawTransaction(signedTx.serialize());
-      await connection.confirmTransaction({
-        signature,
-        blockhash,
-        lastValidBlockHeight,
-      }, "confirmed");
 
       setSuccess(true);
+      setSignature(data.signature);
       setResult(
-        `Transferred ${amount} tokens to ${recipient}\n` +
-        `From: ${sourceAta.toBase58()}\n` +
-        `To: ${destAta.toBase58()}`
+        `Transferred ${data.amount} tokens\nFrom: ${data.source}\nTo: ${data.destination}\nSignature: ${data.signature}`
       );
     } catch (error: any) {
       console.error("Transfer error:", error);
@@ -155,7 +75,7 @@ export function TransferTokenForm() {
           />
         </div>
         <div>
-          <Label htmlFor="recipient">Recipient Address</Label>
+          <Label htmlFor="recipient">Recipient Wallet Address</Label>
           <Input
             id="recipient"
             value={recipient}
@@ -174,7 +94,7 @@ export function TransferTokenForm() {
           />
         </div>
         <p className="text-xs text-slate-400">
-          Source and destination ATAs are auto-created if they don't exist.
+          Transfers via backend keypair signer. Source is test wallet, ATAs auto-created if needed.
         </p>
       </div>
 
@@ -185,6 +105,7 @@ export function TransferTokenForm() {
       <TransactionResult
         success={success}
         message={result}
+        signature={signature}
         cluster="devnet"
       />
     </form>
