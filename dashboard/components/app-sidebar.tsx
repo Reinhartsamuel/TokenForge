@@ -90,9 +90,9 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
-                const isActive =
-                  pathname === item.url ||
-                  (item.url !== "/" && pathname?.startsWith(item.url));
+                const isActive = item.items
+                  ? pathname === item.url || pathname?.startsWith(item.url + "/")
+                  : pathname === item.url;
 
                 return (
                   <SidebarMenuItem key={item.title}>

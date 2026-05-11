@@ -134,7 +134,7 @@ export default function DistributionsPage() {
                       {new Date(dist.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <Link href={`/distributions/${dist.id}`}>
+                      <Link href={`/dashboard/distributions/${dist.id}`}>
                         <Button variant="ghost" size="sm">View</Button>
                       </Link>
                     </TableCell>

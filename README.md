@@ -31,7 +31,7 @@ TokenForge closes the gap between canonical SSTS capability and issuer operation
 | **SDK** (`sdk/`) | TypeScript workflow SDK — 3 layers (L0 canonical → L1 adapters → L2 workflow APIs) |
 | **Dashboard** (`dashboard/`) | Next.js issuer dashboard for no-code token lifecycle management |
 | **FAMP** (`programs/famp/`) | Allowlist/blocklist verification program with policy-oracle pattern |
-| **Backend** *(planned)* | Indexing, distribution orchestration, reporting |
+| **Backend** | Indexing, distribution orchestration, reporting |
 
 ## Quick Start
 

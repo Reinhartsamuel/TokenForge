@@ -73,7 +73,7 @@ export default function CreateTokenPage() {
       }
 
       toast.success("Token created successfully!");
-      router.push(`/tokens/${data.mint}`);
+      router.push(`/dashboard/tokens/${data.mint}`);
     } catch (error: any) {
       toast.error(`Error: ${error.message}`);
     } finally {

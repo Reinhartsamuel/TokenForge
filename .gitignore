@@ -26,3 +26,7 @@ debug/
 .DS_Store
 .vscode/
 .idea/
+
+# kilo folder
+.kilo/*
+.kilo/plans/*

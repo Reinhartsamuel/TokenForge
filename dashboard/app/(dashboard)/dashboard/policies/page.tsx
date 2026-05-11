@@ -123,7 +123,7 @@ export default function PoliciesPage() {
                       {new Date(policy.updatedAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <Link href={`/policies/${policy.mintAddress}`}>
+                      <Link href={`/dashboard/policies/${policy.mintAddress}`}>
                         <Button variant="ghost" size="sm">Manage</Button>
                       </Link>
                     </TableCell>

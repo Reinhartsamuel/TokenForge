@@ -48,7 +48,7 @@ export default function CreateDistributionPage() {
       }
 
       toast.success("Distribution escrow created!");
-      router.push("/distributions");
+      router.push("/dashboard/distributions");
     } catch (error: any) {
       toast.error(error.message || "Unknown error");
     } finally {
