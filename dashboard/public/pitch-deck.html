@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TokenForge — Pitch Deck</title>
+  <style>
+    :root {
+      --c-bg: #0F0F23;
+      --c-bg-alt: #13132b;
+      --c-bg-card: #1a1a35;
+      --c-surface: #1e1e3e;
+      --c-border: rgba(255,255,255,0.08);
+
+      --c-primary: #0EA5E9;
+      --c-primary-dim: rgba(14,165,233,0.12);
+      --c-accent: #22C55E;
+      --c-accent-dim: rgba(34,197,94,0.10);
+      --c-danger: #ef4444;
+      --c-warning: #f59e0b;
+
+      --c-text: #f1f5f9;
+      --c-text-secondary: rgba(241,245,249,0.65);
+      --c-text-muted: rgba(241,245,249,0.4);
+
+      --f-hero: 96px;
+      --f-h1: 64px;
+      --f-h2: 48px;
+      --f-h3: 36px;
+      --f-body: 28px;
+      --f-small: 22px;
+      --f-caption: 18px;
+
+      --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+
+      --s-xs: 8px;
+      --s-sm: 16px;
+      --s-md: 32px;
+      --s-lg: 48px;
+      --s-xl: 64px;
+      --s-2xl: 96px;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --duration-enter: 0.6s;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; background: var(--c-bg); color: var(--c-text); }
+
+    .deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 100px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.5s var(--ease-out);
+      font-family: var(--font-display);
+      background: var(--c-bg);
+    }
+
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    .slide.active .animate-in { animation: slideUp var(--duration-enter) var(--ease-out) both; }
+    .slide.active .animate-in:nth-child(1) { animation-delay: 0s; }
+    .slide.active .animate-in:nth-child(2) { animation-delay: 0.08s; }
+    .slide.active .animate-in:nth-child(3) { animation-delay: 0.16s; }
+    .slide.active .animate-in:nth-child(4) { animation-delay: 0.24s; }
+    .slide.active .animate-in:nth-child(5) { animation-delay: 0.32s; }
+    .slide.active .animate-in:nth-child(6) { animation-delay: 0.4s; }
+    .slide.active .animate-in:nth-child(7) { animation-delay: 0.48s; }
+    .slide.active .animate-in:nth-child(8) { animation-delay: 0.56s; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero { font-size: var(--f-hero); font-weight: 900; letter-spacing: -3px; line-height: 1.05; }
+    .h1 { font-size: var(--f-h1); font-weight: 800; letter-spacing: -2px; line-height: 1.1; }
+    .h2 { font-size: var(--f-h2); font-weight: 700; letter-spacing: -1px; line-height: 1.2; }
+    .h3 { font-size: var(--f-h3); font-weight: 600; line-height: 1.3; }
+    .body { font-size: var(--f-body); font-weight: 400; line-height: 1.5; color: var(--c-text-secondary); }
+    .small { font-size: var(--f-small); font-weight: 400; line-height: 1.5; color: var(--c-text-secondary); }
+    .caption { font-size: var(--f-caption); font-weight: 500; color: var(--c-text-muted); letter-spacing: 2px; text-transform: uppercase; }
+    .mono { font-family: var(--font-mono); }
+
+    .text-primary { color: var(--c-primary); }
+    .text-accent { color: var(--c-accent); }
+    .text-muted { color: var(--c-text-muted); }
+    .text-danger { color: var(--c-danger); }
+    .text-emphasis { color: var(--c-primary); font-weight: 800; }
+
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-xs { gap: var(--s-xs); }
+    .gap-sm { gap: var(--s-sm); }
+    .gap-md { gap: var(--s-md); }
+    .gap-lg { gap: var(--s-lg); }
+    .gap-xl { gap: var(--s-xl); }
+    .flex-1 { flex: 1; }
+    .w-full { width: 100%; }
+    .text-center { text-align: center; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-lg); }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-md); }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-md); }
+
+    .card {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: 16px;
+      padding: var(--s-lg);
+    }
+    .card-glow {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-primary-dim);
+      border-radius: 16px;
+      padding: var(--s-lg);
+      box-shadow: 0 0 40px var(--c-primary-dim);
+    }
+
+    .metric-card { text-align: center; padding: var(--s-lg); }
+    .metric-value {
+      font-size: 72px; font-weight: 900; color: var(--c-accent);
+      letter-spacing: -2px; line-height: 1;
+    }
+    .metric-label {
+      font-size: var(--f-small); color: var(--c-text-muted);
+      margin-top: var(--s-xs); font-weight: 500;
+    }
+
+    .badge {
+      display: inline-block; padding: 6px 16px; border-radius: 100px;
+      font-size: var(--f-caption); font-weight: 600; letter-spacing: 1px;
+    }
+    .badge-primary { background: var(--c-primary-dim); color: var(--c-primary); }
+    .badge-accent { background: var(--c-accent-dim); color: var(--c-accent); }
+    .badge-outline { border: 1px solid var(--c-border); color: var(--c-text-secondary); }
+
+    .divider {
+      width: 64px; height: 3px; border-radius: 2px;
+      background: var(--c-primary); opacity: 0.6; margin: var(--s-md) 0;
+    }
+
+    .progress-bar {
+      width: 100%; height: 8px; border-radius: 4px;
+      background: rgba(255,255,255,0.06); overflow: hidden;
+    }
+    .progress-fill { height: 100%; border-radius: 4px; background: var(--c-primary); }
+
+    .bullet-list { list-style: none; }
+    .bullet-list li {
+      padding: var(--s-sm) 0; padding-left: var(--s-md);
+      position: relative; font-size: var(--f-body);
+      color: var(--c-text-secondary); border-bottom: 1px solid var(--c-border);
+    }
+    .bullet-list li:last-child { border-bottom: none; }
+    .bullet-list li::before {
+      content: ''; position: absolute; left: 0; top: 50%;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--c-primary); transform: translateY(-50%);
+    }
+
+    .comparison-table { width: 100%; border-collapse: collapse; }
+    .comparison-table th {
+      text-align: left; padding: var(--s-sm) var(--s-md);
+      font-size: var(--f-small); color: var(--c-text-muted);
+      border-bottom: 1px solid var(--c-border); font-weight: 600;
+    }
+    .comparison-table td {
+      padding: var(--s-sm) var(--s-md);
+      font-size: var(--f-body); border-bottom: 1px solid var(--c-border);
+      color: var(--c-text-secondary);
+    }
+    .comparison-table tr.highlight td { color: var(--c-text); background: var(--c-primary-dim); font-weight: 600; }
+    .check { color: var(--c-accent); font-weight: 700; }
+    .cross { color: var(--c-text-muted); }
+
+    .timeline { position: relative; padding-left: var(--s-lg); }
+    .timeline::before {
+      content: ''; position: absolute; left: 12px; top: 0; bottom: 0;
+      width: 2px; background: var(--c-border);
+    }
+    .timeline-item { position: relative; padding-bottom: var(--s-lg); }
+    .timeline-dot {
+      position: absolute; left: -42px; top: 4px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--c-primary); border: 2px solid var(--c-bg);
+    }
+    .timeline-item.active .timeline-dot { background: var(--c-accent); box-shadow: 0 0 12px var(--c-accent-dim); }
+
+    .code-block {
+      background: var(--c-bg-card); border: 1px solid var(--c-border);
+      border-radius: 12px; padding: var(--s-md); font-family: var(--font-mono);
+      font-size: var(--f-small); line-height: 1.6; color: var(--c-text-secondary);
+      overflow: auto;
+    }
+    .code-keyword { color: var(--c-primary); }
+    .code-string { color: var(--c-accent); }
+    .code-comment { color: var(--c-text-muted); }
+
+    .bg-default { background: var(--c-bg); }
+    .bg-alt { background: var(--c-bg-alt); }
+    .bg-surface { background: var(--c-surface); }
+
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 40px;
+      background: linear-gradient(0deg, rgba(10,10,15,0.95) 0%, transparent 100%);
+      z-index: 100; opacity: 0; transition: opacity 0.3s;
+    }
+    .deck:hover .nav-bar { opacity: 1; }
+    .nav-counter { font-size: 16px; color: var(--c-text-muted); font-family: var(--font-mono); }
+    .nav-progress { flex: 1; max-width: 200px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); margin: 0 24px; }
+    .nav-progress-fill { height: 100%; border-radius: 2px; background: var(--c-primary); transition: width 0.3s var(--ease-out); }
+    .nav-btn {
+      background: none; border: 1px solid var(--c-border); color: var(--c-text-secondary);
+      padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; font-family: var(--font-display);
+    }
+    .nav-btn:hover { border-color: var(--c-primary); color: var(--c-text); }
+
+    .notes {
+      display: none; position: fixed; bottom: 60px; left: 40px; right: 40px;
+      background: rgba(0,0,0,0.9); border: 1px solid var(--c-border);
+      border-radius: 12px; padding: 20px 24px;
+      font-size: 16px; color: var(--c-text-secondary); line-height: 1.6;
+      z-index: 200; max-height: 200px; overflow-y: auto;
+    }
+    .notes.visible { display: block; }
+    .notes-label { font-size: 12px; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+
+    @media print {
+      .deck { overflow: visible; }
+      .slide { position: relative; opacity: 1; pointer-events: auto; page-break-after: always; height: 100vh; break-inside: avoid; }
+      .nav-bar, .notes { display: none !important; }
+      .animate-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide bg-alt" style="justify-content: center; align-items: center; text-align: center;">
+      <h1 class="hero text-emphasis animate-in" onclick="toggleNotes()">TokenForge</h1>
+      <p class="h3 animate-in" style="color: var(--c-text-secondary); margin-top: 24px; max-width: 700px;">
+        The issuer tooling layer for regulated security tokens on Solana
+      </p>
+      <div class="animate-in" style="margin-top: 48px; display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+        <span class="badge badge-primary">Developer Tooling</span>
+        <span class="badge badge-accent">Hackathon Build</span>
+      </div>
+      <div class="notes">
+        TokenForge makes the Solana Security Token Standard (SSTS) usable. Creating a security token goes from 50 lines of account plumbing to 5 lines of SDK code. We don't compete with the standard — we make it accessible to any team.
+      </div>
+    </div>
+
+    <!-- SLIDE 2: PROBLEM -->
+    <div class="slide bg-default">
+      <span class="caption animate-in">THE PROBLEM</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px; max-width: 900px;">
+        SSTS gives the protocol.<br>Issuers still need <span class="text-emphasis">everything else.</span>
+      </h1>
+      <div class="divider animate-in"></div>
+      <div class="grid-2 animate-in" style="margin-top: 32px;">
+        <div class="card" style="border-color: rgba(239,68,68,0.2);">
+          <p class="caption" style="color: var(--c-danger); margin-bottom: 16px;">THE GAP</p>
+          <ul class="bullet-list">
+            <li>~50 lines of account plumbing per token</li>
+            <li>No reusable SDK — every team builds one</li>
+            <li>Compliance needs custom programs</li>
+            <li>Operators need dashboards, not CLIs</li>
+          </ul>
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: center; padding: var(--s-md);">
+          <p class="h2" style="margin-bottom: 24px;">The math:</p>
+          <p class="body" style="margin-bottom: 16px;">
+            <span class="text-primary" style="font-weight: 700;">24 canonical SSTS instructions</span> ship on-chain.
+          </p>
+          <p class="body" style="margin-bottom: 16px;">
+            But issuers still derive PDAs, compose transactions, build compliance, and wire operator UIs <span class="text-danger" style="font-weight: 700;">from scratch.</span>
+          </p>
+          <p class="h3 text-accent">
+            Result: months of integration per issuer.
+          </p>
+        </div>
+      </div>
+      <div class="notes">
+        The canonical SSTS launched with 24 instructions — it's a complete security token protocol. But raw instructions require deep Solana knowledge. Every RWA issuer faces the same integration wall: PDA derivation, multi-instruction composition, compliance program development, and operator dashboards. This gap between protocol capability and operational readiness is what we solve.
+      </div>
+    </div>
+
+    <!-- SLIDE 3: WHY NOW -->
+    <div class="slide bg-alt">
+      <span class="caption animate-in">WHY NOW</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px;">
+        The standard just launched. The window is open.
+      </h1>
+      <div class="divider animate-in"></div>
+      <div class="grid-3 animate-in" style="margin-top: 32px;">
+        <div class="card">
+          <p class="caption" style="color: var(--c-primary);">STANDARD</p>
+          <p class="h3" style="margin-top: 12px;">SSTS launched Jan 2026</p>
+          <p class="small" style="margin-top: 8px;">Built by Halborn, Hoodies, Securitize, Franklin Templeton — with Solana Foundation support</p>
+        </div>
+        <div class="card">
+          <p class="caption" style="color: var(--c-primary);">MARKET</p>
+          <p class="h3" style="margin-top: 12px;">On-chain RWA: $21B+</p>
+          <p class="small" style="margin-top: 8px;">636K+ holders, 140 issuers. Solana RWA hit $1.1B and growing fastest</p>
+        </div>
+        <div class="card">
+          <p class="caption" style="color: var(--c-primary);">OPPORTUNITY</p>
+          <p class="h3" style="margin-top: 12px;">Zero incumbent tooling</p>
+          <p class="small" style="margin-top: 8px;">No dedicated SSTS issuer platform exists. First-mover advantage is real and time-limited</p>
+        </div>
+      </div>
+      <div class="notes">
+        SSTS was announced January 26, 2026 — it's months old. The standard has heavyweight backing (Halborn, Securitize, Franklin Templeton, Solana Foundation) but zero tooling layer. Meanwhile, on-chain RWAs crossed $21B in January 2026, and Solana is the fastest-growing chain for RWA value. The window to own the SSTS tooling layer is now — before someone else does.
+      </div>
+    </div>
+
+    <!-- SLIDE 4: SOLUTION -->
+    <div class="slide bg-default">
+      <span class="caption animate-in">THE SOLUTION</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px; max-width: 900px;">
+        From 50 lines of plumbing<br>to <span class="text-emphasis">5 lines of SDK.</span>
+      </h1>
+      <div class="divider animate-in"></div>
+      <div class="grid-3 animate-in" style="margin-top: 32px;">
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+          <p class="h3">TypeScript SDK</p>
+          <p class="small" style="margin-top: 8px;">3-layer design: L0 canonical → L1 adapters → L2 workflows. 13 functions, 1,637 lines</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+          <p class="h3">FAMP Compliance</p>
+          <p class="small" style="margin-top: 8px;">Allowlist/blocklist verification program. Policy-oracle pattern — events drive freeze/thaw</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 16px;">⚡</div>
+          <p class="h3">Issuer Dashboard</p>
+          <p class="small" style="margin-top: 8px;">Next.js no-code UI for token lifecycle, compliance management, and distributions</p>
+        </div>
+      </div>
+      <div class="notes">
+        TokenForge has three components: The SDK wraps canonical SSTS with ergonomic workflow APIs — createSecurityToken, mintTokens, transferTokens, and more. FAMP is our compliance verification program registered with SSTS, managing allowlists and blocklists with a novel policy-oracle pattern. The dashboard gives operators a no-code interface for everything. All built on top of canonical SSTS, never competing with it.
+      </div>
+    </div>
+
+    <!-- SLIDE 5: DEMO / PRODUCT -->
+    <div class="slide" style="padding: 60px;">
+      <div class="flex gap-xl items-center" style="height: 100%;">
+        <div class="flex-1 animate-in">
+          <div class="code-block">
+            <span class="code-comment">// Create a security token — 1 call, 1 transaction</span><br>
+            <span class="code-keyword">import</span> { createSecurityToken } <span class="code-keyword">from</span> <span class="code-string">'@tokenforge/sdk'</span>;<br><br>
+            <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> createSecurityToken(rpc, issuer, mint, {<br>
+            &nbsp;&nbsp;decimals: <span class="code-string">6</span>,<br>
+            &nbsp;&nbsp;metadata: {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;name: <span class="code-string">'My Security Token'</span>,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;symbol: <span class="code-string">'MST'</span>,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;uri: <span class="code-string">'https://my-token.io/meta'</span>,<br>
+            &nbsp;&nbsp;}<br>
+            });<br><br>
+            <span class="code-comment">// → Token created. Done.</span>
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col gap-md animate-in">
+          <span class="caption">SHIPPING NOW</span>
+          <h2 class="h2">Working on devnet</h2>
+          <div class="flex flex-col gap-sm" style="margin-top: 16px;">
+            <div class="flex items-center gap-sm">
+              <span class="check" style="font-size: 24px;">✓</span>
+              <span class="body">Create, mint, transfer tokens</span>
+            </div>
+            <div class="flex items-center gap-sm">
+              <span class="check" style="font-size: 24px;">✓</span>
+              <span class="body">FAMP policy management UI</span>
+            </div>
+            <div class="flex items-center gap-sm">
+              <span class="check" style="font-size: 24px;">✓</span>
+              <span class="body">Distribution create & claim</span>
+            </div>
+            <div class="flex items-center gap-sm">
+              <span class="check" style="font-size: 24px;">✓</span>
+              <span class="body">PostgreSQL-backed dashboard</span>
+            </div>
+            <div class="flex items-center gap-sm">
+              <span class="check" style="font-size: 24px;">✓</span>
+              <span class="body">4 programs deployed to devnet</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        The code on the left is real — it's what the SDK does. Behind the scenes, that single call handles: PDA derivation, Token-2022 extension configuration, verification config initialization, and transaction composition. What used to take ~50 lines of account plumbing is now one function call. The dashboard is live on devnet with wallet connect, 5 operational tabs, and PostgreSQL persistence.
+      </div>
+    </div>
+
+    <!-- SLIDE 6: WHY SOLANA -->
+    <div class="slide bg-default">
+      <span class="caption animate-in">WHY SOLANA</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px;">
+        Compliance needs runtime enforcement,<br>not database checks.
+      </h1>
+      <div class="divider animate-in"></div>
+      <div class="grid-2 animate-in" style="margin-top: 32px;">
+        <div class="card" style="border-color: rgba(239,68,68,0.2);">
+          <p class="caption" style="color: var(--c-danger);">WITHOUT SOLANA</p>
+          <ul class="bullet-list" style="margin-top: 16px;">
+            <li>Off-chain compliance = trust assumption</li>
+            <li>Per-issuer contract sprawl (EVM)</li>
+            <li>Multi-day settlement for transfers</li>
+          </ul>
+        </div>
+        <div class="card-glow">
+          <p class="caption" style="color: var(--c-accent);">WITH SOLANA + SSTS</p>
+          <ul class="bullet-list" style="margin-top: 16px;">
+            <li style="color: var(--c-text);">Verification runs on-chain, every transfer</li>
+            <li style="color: var(--c-text);">Single token primitive — no per-issuer contracts</li>
+            <li style="color: var(--c-text);">Sub-second finality, sub-cent fees</li>
+          </ul>
+        </div>
+      </div>
+      <div class="notes">
+        This isn't "blockchain for the sake of blockchain." SSTS uses Solana's Transfer Hook extension to enforce compliance at runtime — every token transfer is verified on-chain before it executes. On EVM chains, each issuer deploys their own contract, creating sprawl and audit overhead. On Solana, there's one canonical SSTS program and one transfer hook. SPL Token-2022 gives us a single token primitive with extensions, not custom contracts per issuer. This is structurally better for regulated assets.
+      </div>
+    </div>
+
+    <!-- SLIDE 7: TRACTION -->
+    <div class="slide bg-alt">
+      <span class="caption animate-in">TRACTION</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px;">
+        Built in <span class="text-emphasis">4 days</span>. Shipping on devnet.
+      </h1>
+      <div class="divider animate-in"></div>
+      <div class="grid-4 animate-in" style="margin-top: 32px;">
+        <div class="metric-card">
+          <div class="metric-value">23</div>
+          <div class="metric-label">Tests passing (0 failing)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">4</div>
+          <div class="metric-label">Programs deployed</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">13</div>
+          <div class="metric-label">SDK workflow functions</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">5</div>
+          <div class="metric-label">Dashboard operational tabs</div>
+        </div>
+      </div>
+      <div class="animate-in" style="margin-top: 48px;">
+        <div class="flex items-center gap-md" style="height: 80px; align-items: flex-end;">
+          <div style="flex:1; background: var(--c-primary); height: 25%; border-radius: 6px 6px 0 0; opacity: 0.4;"></div>
+          <div style="flex:1; background: var(--c-primary); height: 40%; border-radius: 6px 6px 0 0; opacity: 0.55;"></div>
+          <div style="flex:1; background: var(--c-primary); height: 55%; border-radius: 6px 6px 0 0; opacity: 0.7;"></div>
+          <div style="flex:1; background: var(--c-primary); height: 75%; border-radius: 6px 6px 0 0; opacity: 0.85;"></div>
+          <div style="flex:1; background: var(--c-accent); height: 100%; border-radius: 6px 6px 0 0;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top: 8px;">
+          <span class="caption">Apr 30 — Migration</span>
+          <span class="caption">May 1 — SDK</span>
+          <span class="caption">May 3 — Tests</span>
+          <span class="caption">May 7 — Dashboard</span>
+          <span class="caption">May 12 — Today</span>
+        </div>
+      </div>
+      <div class="notes">
+        We migrated from a custom SSTS fork to canonical-first in one release. Built the full SDK (1,637 lines, 13 functions) with L0/L1/L2 architecture. Wrote 23 integration and unit tests — all passing, all in ~23 seconds. Deployed 4 programs to devnet: FAMP, NOOP verifier, canonical SSTS, and canonical transfer hook. Built the Next.js dashboard with 5 operational tabs and PostgreSQL persistence. Confirmed transactions on devnet for token create, mint, transfer, FAMP policy, and verification config.
+      </div>
+    </div>
+
+    <!-- SLIDE 8: COMPETITION -->
+    <div class="slide">
+      <span class="caption animate-in">COMPETITION</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px;">
+        EVM platforms exist. Solana tooling does not.
+      </h1>
+      <div class="divider animate-in"></div>
+      <table class="comparison-table animate-in" style="margin-top: 32px;">
+        <thead>
+          <tr>
+            <th style="width: 180px;">Capability</th>
+            <th>Securitize</th>
+            <th>Tokeny</th>
+            <th>SSTS Example</th>
+            <th style="color: var(--c-accent);">TokenForge</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Solana-native SSTS</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Reusable SDK</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Operator dashboard</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Compliance extension</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Canonical-first (not fork)</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr class="highlight">
+            <td>SSTS tooling layer</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="notes">
+        Securitize and Tokeny are great EVM platforms — but they're not on Solana. The official SSTS example project is a reference implementation, not a production tooling layer. TokenForge is the only dedicated SSTS issuer platform that combines SDK, dashboard, and compliance extensions while staying canonical-first. Our moat: deep SSTS expertise and shipping velocity.
+      </div>
+    </div>
+
+    <!-- SLIDE 9: TEAM -->
+    <div class="slide">
+      <span class="caption animate-in">TEAM</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px;">Solo builder. Full-stack. Shipping fast.</h1>
+      <div class="divider animate-in"></div>
+      <div class="grid-3 animate-in" style="margin-top: 32px;">
+        <div class="card" style="text-align: center; padding: 32px;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; background: var(--c-primary); display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 800;">TF</div>
+          <p class="h3">Founder</p>
+          <p class="small text-primary" style="margin-top: 4px;">Fullstack Engineer</p>
+          <ul class="bullet-list" style="margin-top: 16px; text-align: left;">
+            <li>EVM smart contract engineer</li>
+            <li>Solana cNFT / Metaplex (B2B collectibles)</li>
+            <li>Co-founded algo trading platform</li>
+            <li>$10M monthly volume per exchange</li>
+          </ul>
+        </div>
+        <div class="card-glow" style="grid-column: span 2; display: flex; flex-direction: column; justify-content: center;">
+          <p class="caption" style="color: var(--c-accent); margin-bottom: 16px;">WHY THIS TEAM WINS</p>
+          <ul class="bullet-list">
+            <li>Shipped v1.0 → v1.5 in 12 days</li>
+            <li>Deep protocol + frontend + infra range</li>
+            <li>Trading platform experience = issuer mindset</li>
+            <li>Canonical-first discipline, not ego-driven forks</li>
+          </ul>
+        </div>
+      </div>
+      <div class="notes">
+        I'm a fullstack engineer with experience across EVM and Solana. Built cNFT tooling for a B2B collectibles platform ("tweet to mint") on Solana. Co-founded an algo trading platform with $10M monthly volume per exchange integration — that experience gave me direct insight into what issuers and operators need: reliability, clear diagnostics, and no-code workflows. The velocity speaks for itself: canonical migration, SDK, integration tests, and dashboard in under two weeks.
+      </div>
+    </div>
+
+    <!-- SLIDE 10: ROADMAP -->
+    <div class="slide bg-alt">
+      <span class="caption animate-in">ROADMAP</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px;">
+        What ships next.
+      </h1>
+      <div class="divider animate-in"></div>
+      <div class="timeline animate-in" style="margin-top: 32px; max-width: 700px;">
+        <div class="timeline-item active">
+          <div class="timeline-dot"></div>
+          <p class="h3">v1.3 — Dashboard Complete</p>
+          <p class="caption" style="margin: 4px 0;">May–Jun 2026</p>
+          <p class="small">Policy-oracle event handling, full workflow integration, public npm SDK release</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <p class="h3">v1.x — Backend Services</p>
+          <p class="caption" style="margin: 4px 0;">Jun–Jul 2026</p>
+          <p class="small">Indexing, distribution orchestration, reporting, expanded policy tooling</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <p class="h3">v2.0 — Managed Service</p>
+          <p class="caption" style="margin: 4px 0;">Q3 2026</p>
+          <p class="small">SaaS hosted backend, enterprise tier, security audit, pilot with 2-3 RWA issuers</p>
+        </div>
+      </div>
+      <div class="notes">
+        Next up: complete the dashboard v1.0 with full workflow integration and policy-oracle event handling (auto freeze/thaw on FAMP events). Then backend services for indexing, distribution orchestration, and reporting. By Q3, we'll have a managed SaaS tier with enterprise controls, a third-party security audit of FAMP, and pilot issuers on devnet. The SDK will have a public npm release with full developer documentation.
+      </div>
+    </div>
+
+    <!-- SLIDE 11: ASK -->
+    <div class="slide bg-alt" style="justify-content: center; align-items: center; text-align: center;">
+      <span class="caption animate-in">THE ASK</span>
+      <h1 class="hero animate-in" style="margin-top: 24px;">
+        <span class="text-accent">Win the Hackathon.</span><br>
+        <span style="font-size: var(--f-h1); color: var(--c-text-secondary);">Build the future.</span>
+      </h1>
+      <div class="divider animate-in" style="margin: 32px auto;"></div>
+      <div class="animate-in" style="max-width: 600px;">
+        <p class="h3" style="margin-bottom: 24px; color: var(--c-text-secondary);">Seeking pre-seed / accelerator — amount TBD</p>
+        <div class="flex flex-col gap-sm w-full">
+          <div>
+            <div class="flex justify-between" style="margin-bottom: 4px;">
+              <span class="body">Engineering (backend + dashboard)</span>
+              <span class="small">60%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 60%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between" style="margin-bottom: 4px;">
+              <span class="body">Security audit (FAMP + SDK)</span>
+              <span class="small">15%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 15%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between" style="margin-bottom: 4px;">
+              <span class="body">Infrastructure + ecosystem</span>
+              <span class="small">25%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 25%;"></div></div>
+          </div>
+        </div>
+        <p class="body" style="margin-top: 32px; color: var(--c-text-muted);">
+          Milestone: Complete dashboard v1.0, public SDK release, first pilot issuer
+        </p>
+      </div>
+      <div class="notes">
+        For hackathon judges: we're asking for the win — this project demonstrates a complete, working integration with canonical SSTS that no one else has built. For accelerator/VC: we're seeking pre-seed funding to complete the dashboard, release the SDK publicly, and onboard our first pilot issuers. The ask amount is intentionally open — we want to find the right partner first, then size the round to match.
+      </div>
+    </div>
+
+    <!-- SLIDE 12: CONTACT -->
+    <div class="slide bg-default" style="justify-content: center; align-items: center; text-align: center;">
+      <h1 class="hero text-emphasis animate-in">TokenForge</h1>
+      <p class="h3 animate-in" style="color: var(--c-text-secondary); margin-top: 16px;">
+        We don't compete with the standard. We make it usable.
+      </p>
+      <div class="animate-in" style="margin-top: 48px; display: flex; flex-direction: column; gap: 12px;">
+        <p class="body">Solana Frontier Hackathon — Colosseum</p>
+        <p class="body text-primary">Developer Tooling / RWA Infrastructure</p>
+        <p class="body text-muted">github.com/tokenforge</p>
+      </div>
+      <div class="notes">
+        Thank you. We're building the tooling layer that makes SSTS accessible to every issuer on Solana. Happy to demo live or walk through the SDK code.
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="prev()">← Prev</button>
+      <span class="nav-counter"><span id="current">1</span> / <span id="total"></span></span>
+      <div class="nav-progress"><div class="nav-progress-fill" id="progress"></div></div>
+      <button class="nav-btn" onclick="next()">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let notesVisible = false;
+
+    document.getElementById('total').textContent = total;
+
+    function show(i) {
+      slides.forEach(s => s.classList.remove('active'));
+      current = Math.max(0, Math.min(i, total - 1));
+      slides[current].classList.add('active');
+      document.getElementById('current').textContent = current + 1;
+      document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+
+      document.querySelectorAll('.notes').forEach(n => n.classList.remove('visible'));
+      const note = slides[current].querySelector('.notes');
+      if (note && notesVisible) note.classList.add('visible');
+    }
+
+    function next() { show(current + 1); }
+    function prev() { show(current - 1); }
+    function toggleNotes() {
+      notesVisible = !notesVisible;
+      document.querySelectorAll('.notes').forEach(n => {
+        n.classList.toggle('visible', notesVisible && n.closest('.slide').classList.contains('active'));
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      if (e.key === 'n' || e.key === 'N') {
+        notesVisible = !notesVisible;
+        document.querySelectorAll('.notes').forEach(n => {
+          n.classList.toggle('visible', notesVisible && n.closest('.slide').classList.contains('active'));
+        });
+      }
+    });
+
+    document.getElementById('deck').addEventListener('click', (e) => {
+      if (e.target.closest('.nav-bar') || e.target.closest('.nav-btn')) return;
+      if (e.clientX > window.innerWidth / 2) next(); else prev();
+    });
+
+    show(0);
+  </script>
+</body>
+</html>

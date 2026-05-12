@@ -1,7 +1,8 @@
 "use client";
 
-import { Code2, ArrowRight } from "lucide-react";
+import { Code2, ArrowRight, Presentation } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function CTASection() {
   return (
@@ -39,6 +40,16 @@ export function CTASection() {
               <Code2 className="mr-2 h-4 w-4" />
               Explore SDK
             </Button>
+            <Link href="/pitch-deck.html">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-[#14F195]/40 text-[#14F195] hover:bg-[#14F195]/10"
+              >
+                <Presentation className="mr-2 h-4 w-4" />
+                View Pitch Deck
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
