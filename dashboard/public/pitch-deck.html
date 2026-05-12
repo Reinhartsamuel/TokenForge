@@ -259,7 +259,7 @@
         <span class="badge badge-accent">Hackathon Build</span>
       </div>
       <div class="notes">
-        TokenForge makes the Solana Security Token Standard (SSTS) usable. Creating a security token goes from 50 lines of account plumbing to 5 lines of SDK code. We don't compete with the standard — we make it accessible to any team.
+        The issuer tooling layer for regulated security tokens built on top of Solana Security Token Standard (SSTS)
       </div>
     </div>
 
@@ -294,7 +294,7 @@
         </div>
       </div>
       <div class="notes">
-        The canonical SSTS launched with 24 instructions — it's a complete security token protocol. But raw instructions require deep Solana knowledge. Every RWA issuer faces the same integration wall: PDA derivation, multi-instruction composition, compliance program development, and operator dashboards. This gap between protocol capability and operational readiness is what we solve.
+        The canonical SSTS launched with 24 instructions — it's a complete security token protocol. But every RWA issuer faces the same integration wall: they need to have deep Solana knowledge, PDA derivation, multi-instruction composition, compliance program development, and building their own operator dashboards. This gap is what we're trying to  solve.
       </div>
     </div>
 
@@ -360,18 +360,8 @@
     <div class="slide" style="padding: 60px;">
       <div class="flex gap-xl items-center" style="height: 100%;">
         <div class="flex-1 animate-in">
-          <div class="code-block">
-            <span class="code-comment">// Create a security token — 1 call, 1 transaction</span><br>
-            <span class="code-keyword">import</span> { createSecurityToken } <span class="code-keyword">from</span> <span class="code-string">'@tokenforge/sdk'</span>;<br><br>
-            <span class="code-keyword">const</span> result = <span class="code-keyword">await</span> createSecurityToken(rpc, issuer, mint, {<br>
-            &nbsp;&nbsp;decimals: <span class="code-string">6</span>,<br>
-            &nbsp;&nbsp;metadata: {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;name: <span class="code-string">'My Security Token'</span>,<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;symbol: <span class="code-string">'MST'</span>,<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;uri: <span class="code-string">'https://my-token.io/meta'</span>,<br>
-            &nbsp;&nbsp;}<br>
-            });<br><br>
-            <span class="code-comment">// → Token created. Done.</span>
+          <div style="background: var(--c-bg-card); border: 1px solid var(--c-border); border-radius: 16px; padding: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;">
+            <img src="/tokenforge%20dashboard2.webp" alt="TokenForge Dashboard" style="width: 100%; border-radius: 8px; display: block;">
           </div>
         </div>
         <div class="flex-1 flex flex-col gap-md animate-in">
@@ -478,7 +468,9 @@
         </div>
       </div>
       <div class="notes">
-        We migrated from a custom SSTS fork to canonical-first in one release. Built the full SDK (1,637 lines, 13 functions) with L0/L1/L2 architecture. Wrote 23 integration and unit tests — all passing, all in ~23 seconds. Deployed 4 programs to devnet: FAMP, NOOP verifier, canonical SSTS, and canonical transfer hook. Built the Next.js dashboard with 5 operational tabs and PostgreSQL persistence. Confirmed transactions on devnet for token create, mint, transfer, FAMP policy, and verification config.
+        <!-- We migrated from a custom SSTS fork to canonical-first in one release. Built the full SDK (1,637 lines, 13 functions) with L0/L1/L2 architecture. Wrote 23 integration and unit tests — all passing, all in ~23 seconds. Deployed 4 programs to devnet: FAMP, NOOP verifier, canonical SSTS, and canonical transfer hook. Built the Next.js dashboard with 5 operational tabs and PostgreSQL persistence. Confirmed transactions on devnet for token create, mint, transfer, FAMP policy, and verification config. -->
+
+        We have 4 programs deployed to devnet and working issuer dashboard.
       </div>
     </div>
 
@@ -545,7 +537,7 @@
         </tbody>
       </table>
       <div class="notes">
-        Securitize and Tokeny are great EVM platforms — but they're not on Solana. The official SSTS example project is a reference implementation, not a production tooling layer. TokenForge is the only dedicated SSTS issuer platform that combines SDK, dashboard, and compliance extensions while staying canonical-first. Our moat: deep SSTS expertise and shipping velocity.
+        Current contender are Securitize and Tokeny are great EVM platforms — but they're not on Solana. The official SSTS example project is a reference implementation, not a production tooling layer. TokenForge is the only dedicated SSTS issuer platform that combines SDK, dashboard, and compliance extensions while staying canonical-first. Our moat: deep SSTS expertise and shipping velocity.
       </div>
     </div>
 
@@ -613,7 +605,84 @@
       </div>
     </div>
 
-    <!-- SLIDE 11: ASK -->
+    <!-- SLIDE 11: BUSINESS MODEL -->
+    <div class="slide bg-default">
+      <span class="caption animate-in">BUSINESS MODEL</span>
+      <h1 class="h1 animate-in" style="margin-top: 16px;">
+        Open-source SDK. <span class="text-emphasis">Paid platform.</span>
+      </h1>
+      <div class="divider animate-in"></div>
+      <div class="grid-2 animate-in" style="margin-top: 32px;">
+        <div>
+          <p class="h3" style="margin-bottom: 24px;">Revenue Streams</p>
+          <div class="flex flex-col gap-sm">
+            <div class="card" style="padding: 24px;">
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="h3">Managed Service (SaaS)</p>
+                  <p class="small">Indexing, distribution orchestration, reporting</p>
+                </div>
+                <span class="h2 text-accent">Tiered</span>
+              </div>
+            </div>
+            <div class="card" style="padding: 24px;">
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="h3">Enterprise Tier</p>
+                  <p class="small">Custom compliance, SLA, white-label dashboard</p>
+                </div>
+                <span class="h2 text-accent">Custom</span>
+              </div>
+            </div>
+            <div class="card" style="padding: 24px; border-color: rgba(34,197,94,0.2);">
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="h3">SDK — Open Source</p>
+                  <p class="small">Apache-2.0 licensed. Drives platform adoption</p>
+                </div>
+                <span class="h2 text-accent">Free</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="h3" style="margin-bottom: 24px;">Projections</p>
+          <div class="card-glow">
+            <table class="comparison-table" style="margin-top: 0;">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Month 3</th>
+                  <th>Month 12</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SDK downloads/wk</td>
+                  <td>1,000</td>
+                  <td>20,000+</td>
+                </tr>
+                <tr>
+                  <td>Active issuers</td>
+                  <td>10</td>
+                  <td>150+</td>
+                </tr>
+                <tr>
+                  <td>Managed MRR</td>
+                  <td>$5K</td>
+                  <td>$100K+</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="notes">
+        The business model is simple: open-source the SDK to drive adoption, monetize the managed backend service. SaaS tier for standard issuers (indexing, distribution orchestration, reporting). Enterprise tier for institutions needing custom compliance, SLAs, and white-label dashboards. SDK is Apache-2.0 free — it's the acquisition channel for the paid platform.
+      </div>
+    </div>
+
+    <!-- SLIDE 12: ASK -->
     <div class="slide bg-alt" style="justify-content: center; align-items: center; text-align: center;">
       <span class="caption animate-in">THE ASK</span>
       <h1 class="hero animate-in" style="margin-top: 24px;">
