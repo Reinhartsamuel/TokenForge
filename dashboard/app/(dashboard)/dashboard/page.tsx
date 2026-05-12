@@ -89,9 +89,9 @@ export default function OverviewPage() {
   ];
 
   const quickActions = [
-    { label: "Create Token", href: "/tokens/create", primary: true },
-    { label: "Create Policy", href: "/policies", primary: false },
-    { label: "New Distribution", href: "/distributions", primary: false },
+    { label: "Create Token", href: "/dashboard/tokens/create", primary: true },
+    { label: "Create Policy", href: "/dashboard/policies", primary: false },
+    { label: "New Distribution", href: "/dashboard/distributions", primary: false },
   ];
 
   return (
