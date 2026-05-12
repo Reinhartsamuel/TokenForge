@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Coins, ShieldCheck, Send, Activity } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Loader2, Coins, ShieldCheck, Send, Activity, ExternalLink } from "lucide-react";import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -124,6 +123,27 @@ export default function TokenDetailPage() {
         </div>
       </div>
 
+      <div className="flex items-center gap-2">
+        <Link href={`/dashboard/tokens/${mintAddress}/mint`}>
+          <Button size="sm">
+            <Coins className="h-4 w-4 mr-2" />
+            Mint
+          </Button>
+        </Link>
+        <Link href={`/dashboard/tokens/${mintAddress}/transfer`}>
+          <Button size="sm" variant="outline">
+            <Send className="h-4 w-4 mr-2" />
+            Transfer
+          </Button>
+        </Link>
+        <Link href={`/dashboard/tokens/${mintAddress}/policy`}>
+          <Button size="sm" variant="outline">
+            <ShieldCheck className="h-4 w-4 mr-2" />
+            Policy
+          </Button>
+        </Link>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="border-slate-800 bg-slate-900/50">
           <CardHeader className="pb-2">
@@ -184,6 +204,7 @@ export default function TokenDetailPage() {
                       <TableHead className="text-slate-400">Amount</TableHead>
                       <TableHead className="text-slate-400">Status</TableHead>
                       <TableHead className="text-slate-400">Date</TableHead>
+                      <TableHead className="text-slate-400">View Tx</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -195,6 +216,11 @@ export default function TokenDetailPage() {
                         <TableCell className="text-slate-300">{tx.amount || "—"}</TableCell>
                         <TableCell><StatusBadge status={tx.status} /></TableCell>
                         <TableCell className="text-slate-500 text-sm">{new Date(tx.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Link href={tx.explorerUrl} target="_blank" className="text-blue-500 hover:underline">
+                            <ExternalLink className="h-3 w-3 ml-1" />
+                          </Link>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -246,7 +272,7 @@ export default function TokenDetailPage() {
               ) : (
                 <div className="space-y-4">
                   <p className="text-slate-500 text-sm">No policy has been created for this token yet.</p>
-                  <Link href={`/policies/${mintAddress}`}>
+                  <Link href={`/dashboard/policies/${mintAddress}`}>
                     <Button>Create Policy</Button>
                   </Link>
                 </div>

@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 interface Token {
   id: string;
@@ -31,6 +32,7 @@ export default function TokensPage() {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     fetch("/api/tokens")
@@ -106,7 +108,7 @@ export default function TokensPage() {
               <TableBody>
                 {filtered.map((token) => (
                   <TableRow key={token.id} className="border-slate-800 hover:bg-slate-800/50">
-                    <TableCell>
+                    <TableCell className="hover:cursor-pointer" onClick={() => router.push(`/dashboard/tokens/${token.mintAddress}`)}>
                       <div>
                         <div className="font-medium text-white">{token.name}</div>
                         <div className="text-sm text-slate-500">{token.symbol}</div>
@@ -137,7 +139,7 @@ export default function TokensPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
                           <DropdownMenuItem>
-                            <Link href={`/tokens/${token.mintAddress}`} className="w-full">View Details</Link>
+                            <Link href={`/dashboard/tokens/${token.mintAddress}`} className="w-full">View Details</Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Link href={`https://explorer.solana.com/address/${token.mintAddress}?cluster=devnet`} target="_blank" className="w-full">

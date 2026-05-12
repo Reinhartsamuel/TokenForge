@@ -300,3 +300,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Fixed**: Drizzle ORM query builder type mismatches (conditional branching instead of variable reassignment)
 - **Fixed**: `@base-ui/react` component compatibility (removed unsupported `asChild` props)
 - **Fixed**: Removed non-existent `TokenforgeIcon` import from lucide-react
+
+## [2.1.0] - 2026-05-12
+
+### Token Operations Sub-Pages + FAMP Gating + Distribution Create
+
+#### Added
+
+- **Token Operations Sub-Pages** — Nested pages under `/dashboard/tokens/[mintAddress]/`:
+  - **Mint** (`/mint`) — Mint form with destination and amount, calls `/api/mint-tokens`, records to DB
+  - **Transfer** (`/transfer`) — Transfer form with FAMP gating toggle, calls `/api/transfer-tokens`
+  - **Policy** (`/policy`) — Full FAMP policy management: create policy, allowlist CRUD, blocklist view, policy state display
+- **FAMP Gating Support** — `/api/transfer-tokens` now accepts `enforceFamp` boolean. When `true`, uses `FAMP_PROGRAM_ID` as the verification program instead of `NOOP_VERIFICATION_PROGRAM_ID`, enabling allowlist/blocklist-gated transfers
+- **Distribution Create Page** (`/dashboard/distributions/create`) — Tabbed interface with Create Escrow (token selector, merkle root, escrow ATA) and Claim Distribution (claimant, amount, merkle root, proofs) forms. Calls `/api/distribution`, records to DB
+- **Token Detail Action Buttons** — Mint, Transfer, and Policy buttons added to token detail page header for one-click operations
+- **DB Recording** — All new operation pages record transactions to PostgreSQL after successful on-chain execution
+
+#### Changed
+
+- **Transfer API** — Now supports `enforceFamp` flag. When enabled, FAMP's `verify_transfer` gates transfers against the token's allowlist/blocklist policy
+
+#### Fixed
+
+- **`wallet-context-provider`** — Added explicit `any[]` return type annotation to `useMemo` to resolve TypeScript build error
+
+#### Dashboard Route Map (Post-v2.1.0)
+
+| Route | Purpose |
+|-------|---------|
+| `/dashboard` | Overview with KPIs, recent activity, quick actions |
+| `/dashboard/tokens` | Token list with search |
+| `/dashboard/tokens/create` | 3-step create wizard |
+| `/dashboard/tokens/[mint]` | Token detail with action buttons |
+| `/dashboard/tokens/[mint]/mint` | Mint tokens form |
+| `/dashboard/tokens/[mint]/transfer` | Transfer with FAMP toggle |
+| `/dashboard/tokens/[mint]/policy` | Full FAMP policy management |
+| `/dashboard/policies` | Policy list |
+| `/dashboard/policies/[mint]` | Per-token policy management |
+| `/dashboard/distributions` | Distribution list |
+| `/dashboard/distributions/create` | Create distribution escrow + claim |
+| `/dashboard/activity` | Full transaction log |
+| `/dashboard/settings` | Network and RPC configuration |

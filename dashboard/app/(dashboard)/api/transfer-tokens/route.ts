@@ -17,6 +17,7 @@ import {
   INSTRUCTIONS_SYSVAR_ID,
   SSTS_PROGRAM_ID,
   NOOP_VERIFICATION_PROGRAM_ID,
+  FAMP_PROGRAM_ID,
   TRANSFER_HOOK_PROGRAM_ID,
 } from "@/lib/sdk";
 
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
     const creatorAddress = payerKeypair.publicKey.toBase58() as Address;
 
     const body = await req.json();
-    const { mintAddress: mintStr, source: sourceStr, recipient: recipientStr, amount: amountStr } = body;
+    const { mintAddress: mintStr, source: sourceStr, recipient: recipientStr, amount: amountStr, enforceFamp } = body;
 
     if (!mintStr || !amountStr || !recipientStr) {
       return NextResponse.json(
@@ -56,6 +57,9 @@ export async function POST(req: NextRequest) {
     const connection = new Connection(DEVNET_RPC, "confirmed");
     const mintAddress = mintStr as Address;
     const mintPubkey = new PublicKey(mintAddress);
+
+    // Select verification program: FAMP when enforceFamp=true, NOOP otherwise
+    const verifierProgramId = enforceFamp ? FAMP_PROGRAM_ID : NOOP_VERIFICATION_PROGRAM_ID;
 
     // Source defaults to payer wallet if not provided
     const sourceAddress = (sourceStr || payerKeypair.publicKey.toBase58()) as Address;
@@ -124,7 +128,7 @@ export async function POST(req: NextRequest) {
         { pubkey: destAta, isSigner: false, isWritable: true },
         { pubkey: new PublicKey(TRANSFER_HOOK_PROGRAM_ID), isSigner: false, isWritable: false },
         { pubkey: new PublicKey(TOKEN_2022_PROGRAM_ID), isSigner: false, isWritable: false },
-        { pubkey: new PublicKey(NOOP_VERIFICATION_PROGRAM_ID), isSigner: false, isWritable: false },
+        { pubkey: new PublicKey(verifierProgramId), isSigner: false, isWritable: false },
       ],
       data: instructionData,
     });
