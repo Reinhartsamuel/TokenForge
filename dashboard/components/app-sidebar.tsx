@@ -77,9 +77,7 @@ export function AppSidebar() {
         <div className="flex items-center gap-2">
           <SidebarTrigger className="text-slate-400 hover:text-white" />
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-600">
-              <span className="text-sm font-bold text-white">TF</span>
-            </div>
+            <img src="/anviltokenforge2.webp" alt="TokenForge" className="h-8 w-8" />
             <span className="text-lg font-semibold tracking-tight text-white">TokenForge</span>
           </Link>
         </div>
