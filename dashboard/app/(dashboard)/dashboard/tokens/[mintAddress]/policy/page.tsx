@@ -135,27 +135,27 @@ export default function PolicyPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">FAMP Policy</h1>
-            <p className="text-sm text-slate-400 mt-1">Create a compliance policy for this token</p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">FAMP Policy</h1>
+            <p className="text-sm text-slate-600 mt-1">Create a compliance policy for this token</p>
           </div>
         </div>
 
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-white">Create Policy</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardTitle className="text-slate-900">Create Policy</CardTitle>
+            <CardDescription className="text-slate-600">
               Create an allowlist or blocklist policy for transfer gating.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
               <Label>Token</Label>
-              <Input value={mintAddress} disabled className="bg-slate-800 mt-1" />
+              <Input value={mintAddress} disabled className="mt-1" />
             </div>
-            <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
               <div>
-                <div className="text-sm font-medium text-white">Allowlist Mode</div>
-                <div className="text-xs text-slate-400">
+                <div className="text-sm font-medium text-slate-900">Allowlist Mode</div>
+                <div className="text-xs text-slate-600">
                   {allowlistMode ? "Only allowlisted wallets can hold tokens" : "All wallets allowed except blocklisted"}
                 </div>
               </div>
@@ -184,8 +184,8 @@ export default function PolicyPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">FAMP Policy</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">FAMP Policy</h1>
+          <p className="text-sm text-slate-600 mt-1">
             {policy?.allowlistMode ? "Allowlist Mode" : "Blocklist Mode"} · {policy?.allowlistCount} allowlisted · {policy?.blocklistCount} blocklisted
           </p>
         </div>
@@ -195,10 +195,10 @@ export default function PolicyPage() {
       </div>
 
       {/* Allowlist Section */}
-      <Card className="border-slate-800 bg-slate-900/50">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">Allowlist</CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardTitle className="text-slate-900">Allowlist</CardTitle>
+          <CardDescription className="text-slate-600">
             {policy?.allowlistMode
               ? "Only these wallets are permitted to hold tokens"
               : "Wallets explicitly allowed (currently in blocklist mode)"}
@@ -220,14 +220,14 @@ export default function PolicyPage() {
           {policy && policy.allowlist.length > 0 ? (
             <Table>
               <TableHeader>
-                <TableRow className="border-slate-800 hover:bg-transparent">
-                  <TableHead className="text-slate-400">Wallet</TableHead>
-                  <TableHead className="text-slate-400 w-[80px]"></TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="text-slate-600">Wallet</TableHead>
+                  <TableHead className="text-slate-600 w-[80px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {policy.allowlist.map((wallet, i) => (
-                  <TableRow key={i} className="border-slate-800 hover:bg-slate-800/50">
+                  <TableRow key={i} className="hover:bg-slate-50">
                     <TableCell><AddressLabel address={wallet} /></TableCell>
                     <TableCell>
                       <Button
@@ -236,7 +236,7 @@ export default function PolicyPage() {
                         onClick={() => handleRemoveFromAllowlist(wallet)}
                         disabled={actionLoading}
                       >
-                        <UserMinus className="h-4 w-4 text-red-400" />
+                        <UserMinus className="h-4 w-4 text-red-500" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -250,29 +250,29 @@ export default function PolicyPage() {
       </Card>
 
       {/* Policy Info Card */}
-      <Card className="border-slate-800 bg-slate-900/50">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">Policy Details</CardTitle>
+          <CardTitle className="text-slate-900">Policy Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Mode</span>
+            <span className="text-slate-600">Mode</span>
             <Badge variant={policy?.allowlistMode ? "default" : "secondary"}>
               {policy?.allowlistMode ? "Allowlist" : "Blocklist"}
             </Badge>
           </div>
           {policy?.blocklist && policy.blocklist.length > 0 && (
             <div>
-              <div className="text-sm text-slate-400 mb-2">Blocklist</div>
+              <div className="text-sm text-slate-600 mb-2">Blocklist</div>
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-800 hover:bg-transparent">
-                    <TableHead className="text-slate-400">Wallet</TableHead>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="text-slate-600">Wallet</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {policy.blocklist.map((wallet, i) => (
-                    <TableRow key={i} className="border-slate-800 hover:bg-slate-800/50">
+                    <TableRow key={i} className="hover:bg-slate-50">
                       <TableCell><AddressLabel address={wallet} /></TableCell>
                     </TableRow>
                   ))}

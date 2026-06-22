@@ -86,81 +86,81 @@ export default function DistributionDetailPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               {distribution.tokenName} Distribution
             </h1>
-            <p className="text-sm text-slate-400">Action ID: {distribution.actionId}</p>
+            <p className="text-sm text-slate-600">Action ID: {distribution.actionId}</p>
           </div>
         </div>
         <StatusBadge status={distribution.status} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader className="pb-2">
-            <CardDescription className="text-slate-400">Mint Address</CardDescription>
+            <CardDescription className="text-slate-600">Mint Address</CardDescription>
           </CardHeader>
           <CardContent>
             <AddressLabel address={distribution.mintAddress} chars={6} />
           </CardContent>
         </Card>
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader className="pb-2">
-            <CardDescription className="text-slate-400">Merkle Root</CardDescription>
+            <CardDescription className="text-slate-600">Merkle Root</CardDescription>
           </CardHeader>
           <CardContent>
             <AddressLabel address={distribution.merkleRoot} chars={8} />
           </CardContent>
         </Card>
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader className="pb-2">
-            <CardDescription className="text-slate-400">Total Claimed</CardDescription>
+            <CardDescription className="text-slate-600">Total Claimed</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-semibold text-white">{distribution.totalClaimed}</div>
+            <div className="text-lg font-semibold text-slate-900">{distribution.totalClaimed}</div>
           </CardContent>
         </Card>
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader className="pb-2">
-            <CardDescription className="text-slate-400">Claimants</CardDescription>
+            <CardDescription className="text-slate-600">Claimants</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-semibold text-white">{distribution.totalClaimants}</div>
+            <div className="text-lg font-semibold text-slate-900">{distribution.totalClaimants}</div>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="claims" className="w-full">
-        <TabsList className="bg-slate-800 border-slate-700">
-          <TabsTrigger value="claims" className="data-[state=active]:bg-slate-700">Claims</TabsTrigger>
-          <TabsTrigger value="details" className="data-[state=active]:bg-slate-700">Details</TabsTrigger>
+        <TabsList className="bg-slate-100 border-slate-200">
+          <TabsTrigger value="claims" className="data-[state=active]:bg-white data-[state=active]:text-slate-900">Claims</TabsTrigger>
+          <TabsTrigger value="details" className="data-[state=active]:bg-white data-[state=active]:text-slate-900">Details</TabsTrigger>
         </TabsList>
 
         <TabsContent value="claims" className="mt-4">
-          <Card className="border-slate-800 bg-slate-900/50">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-white">Claim History</CardTitle>
+              <CardTitle className="text-slate-900">Claim History</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-500 text-sm py-4">No claims recorded yet. Create claims through the API.</p>
+              <p className="text-slate-600 text-sm py-4">No claims recorded yet. Create claims through the API.</p>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="details" className="mt-4">
-          <Card className="border-slate-800 bg-slate-900/50">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-white">Distribution Details</CardTitle>
+              <CardTitle className="text-slate-900">Distribution Details</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div>
-                  <div className="text-sm text-slate-400">Status</div>
+                  <div className="text-sm text-slate-600">Status</div>
                   <StatusBadge status={distribution.status} />
                 </div>
                 <div>
-                  <div className="text-sm text-slate-400">Created</div>
-                  <div className="text-white">{new Date(distribution.createdAt).toLocaleString()}</div>
+                  <div className="text-sm text-slate-600">Created</div>
+                  <div className="text-slate-900">{new Date(distribution.createdAt).toLocaleString()}</div>
                 </div>
               </div>
             </CardContent>

@@ -91,8 +91,8 @@ export default function CreateTokenPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Create Token</h1>
-          <p className="text-sm text-slate-400 mt-1">Configure and deploy a new security token</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Create Token</h1>
+          <p className="text-sm text-slate-600 mt-1">Configure and deploy a new security token</p>
         </div>
       </div>
 
@@ -100,25 +100,25 @@ export default function CreateTokenPage() {
         {[1, 2, 3].map((s) => (
           <div key={s} className="flex items-center">
             <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              s === step ? "bg-sky-600 text-white" : s < step ? "bg-green-600 text-white" : "bg-slate-800 text-slate-500"
+              s === step ? "bg-sky-600 text-white" : s < step ? "bg-green-600 text-white" : "bg-slate-200 text-slate-600"
             }`}>
               {s < step ? "✓" : s}
             </div>
-            <span className={`ml-2 text-sm ${s === step ? "text-white" : "text-slate-500"}`}>
+            <span className={`ml-2 text-sm ${s === step ? "text-slate-900" : "text-slate-600"}`}>
               {s === 1 ? "Details" : s === 2 ? "Metadata" : "Deploy"}
             </span>
-            {s < 3 && <div className="w-12 h-px bg-slate-800 mx-3" />}
+            {s < 3 && <div className="w-12 h-px bg-slate-200 mx-3" />}
           </div>
         ))}
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-white">
+            <CardTitle className="text-slate-900">
               {step === 1 ? "Token Details" : step === 2 ? "Metadata" : "Deploy Token"}
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-600">
               {step === 1 && "Configure the basic properties of your security token"}
               {step === 2 && "Upload metadata to R2 storage (optional)"}
               {step === 3 && "Review and deploy to Solana devnet"}
@@ -153,7 +153,7 @@ export default function CreateTokenPage() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="A regulated security token..."
-                    className="w-full min-h-[100px] rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    className="w-full min-h-[100px] rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
                 <div>
@@ -165,33 +165,33 @@ export default function CreateTokenPage() {
                     {uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
                     {uploading ? "Uploading..." : "Upload to R3"}
                   </Button>
-                  {uri && <span className="text-sm text-green-400 break-all">URI: {uri}</span>}
+                  {uri && <span className="text-sm text-green-600 break-all">URI: {uri}</span>}
                 </div>
               </>
             )}
 
             {step === 3 && (
               <div className="space-y-4">
-                <div className="p-4 bg-slate-800 rounded-lg space-y-2">
+                <div className="p-4 bg-slate-50 rounded-lg space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Name</span>
-                    <span className="text-white">{name}</span>
+                    <span className="text-slate-600">Name</span>
+                    <span className="text-slate-900">{name}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Symbol</span>
-                    <span className="text-white">{symbol}</span>
+                    <span className="text-slate-600">Symbol</span>
+                    <span className="text-slate-900">{symbol}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Decimals</span>
-                    <span className="text-white">{decimals}</span>
+                    <span className="text-slate-600">Decimals</span>
+                    <span className="text-slate-900">{decimals}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Metadata</span>
-                    <span className="text-white">{uri ? "Uploaded" : "None"}</span>
+                    <span className="text-slate-600">Metadata</span>
+                    <span className="text-slate-900">{uri ? "Uploaded" : "None"}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Network</span>
-                    <span className="text-sky-400">Devnet</span>
+                    <span className="text-slate-600">Network</span>
+                    <span className="text-sky-600">Devnet</span>
                   </div>
                 </div>
                 <p className="text-xs text-slate-500">

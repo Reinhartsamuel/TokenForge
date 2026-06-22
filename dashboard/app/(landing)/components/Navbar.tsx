@@ -38,6 +38,9 @@ export function Navbar() {
             <Link href="/pitch-deck.html" className="text-sm text-[#14F195] hover:text-[#14F195]/80 transition-colors font-medium">
               Pitch Deck
             </Link>
+            <Link href="/docs" className="text-sm text-[#8B8BA7] hover:text-white transition-colors">
+              Docs
+            </Link>
           </div>
 
           <div className="flex items-center gap-4">
@@ -84,6 +87,9 @@ export function Navbar() {
               </a>
               <Link href="/pitch-deck.html" className="text-sm text-[#14F195] hover:text-[#14F195]/80 transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
                 Pitch Deck
+              </Link>
+              <Link href="/docs" className="text-sm text-[#8B8BA7] hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
+                Docs
               </Link>
               <Button
                 size="sm"

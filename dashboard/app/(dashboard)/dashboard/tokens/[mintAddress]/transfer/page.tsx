@@ -84,23 +84,23 @@ export default function TransferTokenPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Transfer Tokens</h1>
-          <p className="text-sm text-slate-400 mt-1">Transfer security tokens between wallets</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Transfer Tokens</h1>
+          <p className="text-sm text-slate-600 mt-1">Transfer security tokens between wallets</p>
         </div>
       </div>
 
       <form onSubmit={handleTransfer}>
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-white">Transfer Configuration</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardTitle className="text-slate-900">Transfer Configuration</CardTitle>
+            <CardDescription className="text-slate-600">
               Transfers are subject to SSTS verification and optional FAMP policy enforcement.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
               <Label htmlFor="mintAddr">Token Mint Address</Label>
-              <Input id="mintAddr" value={mintAddress} disabled className="bg-slate-800" />
+              <Input id="mintAddr" value={mintAddress} disabled />
             </div>
             <div>
               <Label htmlFor="source">Source Wallet (optional)</Label>
@@ -130,18 +130,18 @@ export default function TransferTokenPage() {
                 placeholder="100"
               />
             </div>
-            <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
               <div className="flex items-center gap-3">
-                <ShieldCheck className="h-5 w-5 text-violet-400" />
+                <ShieldCheck className="h-5 w-5 text-violet-600" />
                 <div>
-                  <div className="text-sm font-medium text-white">Enforce FAMP Policy</div>
-                  <div className="text-xs text-slate-400">Transfer will be gated by allowlist/blocklist</div>
+                  <div className="text-sm font-medium text-slate-900">Enforce FAMP Policy</div>
+                  <div className="text-xs text-slate-600">Transfer will be gated by allowlist/blocklist</div>
                 </div>
               </div>
               <Switch checked={enforceFamp} onCheckedChange={setEnforceFamp} />
             </div>
             {enforceFamp && (
-              <p className="text-xs text-amber-400">
+              <p className="text-xs text-amber-600">
                 When enabled, transfers will be rejected if sender or receiver is not compliant with the FAMP policy.
                 Ensure a FAMP policy has been created for this token first.
               </p>

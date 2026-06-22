@@ -57,21 +57,21 @@ export default function PoliciesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Policies</h1>
-        <p className="text-sm text-slate-400 mt-1">Manage FAMP allowlist and blocklist policies</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Policies</h1>
+        <p className="text-sm text-slate-600 mt-1">Manage FAMP allowlist and blocklist policies</p>
       </div>
 
-      <Card className="border-slate-800 bg-slate-900/50">
+      <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-white">All Policies</CardTitle>
+            <CardTitle className="text-slate-900">All Policies</CardTitle>
             <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search policies..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 border-slate-700 bg-slate-800"
+                className="pl-9"
               />
             </div>
           </div>
@@ -79,12 +79,12 @@ export default function PoliciesPage() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-slate-600" />
+              <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-12">
-              <ShieldCheck className="h-12 w-12 mx-auto text-slate-700 mb-3" />
-              <p className="text-slate-500 mb-4">No tokens available for policy management</p>
+              <ShieldCheck className="h-12 w-12 mx-auto text-slate-400 mb-3" />
+              <p className="text-slate-600 mb-4">No tokens available for policy management</p>
               <Link href="/dashboard/tokens/create">
                 <Button size="sm">Create a token first</Button>
               </Link>
@@ -92,22 +92,22 @@ export default function PoliciesPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="border-slate-800 hover:bg-transparent">
-                  <TableHead className="text-slate-400">Token</TableHead>
-                  <TableHead className="text-slate-400 hidden md:table-cell">Mint Address</TableHead>
-                  <TableHead className="text-slate-400">Mode</TableHead>
-                  <TableHead className="text-slate-400">Allowlist</TableHead>
-                  <TableHead className="text-slate-400">Blocklist</TableHead>
-                  <TableHead className="text-slate-400 hidden sm:table-cell">Updated</TableHead>
-                  <TableHead className="text-slate-400 w-[50px]"></TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="text-slate-600">Token</TableHead>
+                  <TableHead className="text-slate-600 hidden md:table-cell">Mint Address</TableHead>
+                  <TableHead className="text-slate-600">Mode</TableHead>
+                  <TableHead className="text-slate-600">Allowlist</TableHead>
+                  <TableHead className="text-slate-600">Blocklist</TableHead>
+                  <TableHead className="text-slate-600 hidden sm:table-cell">Updated</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((policy) => (
-                  <TableRow key={policy.id} className="border-slate-800 hover:bg-slate-800/50">
+                  <TableRow key={policy.id} className="hover:bg-slate-50">
                     <TableCell>
                       <div>
-                        <div className="font-medium text-white">{policy.tokenName}</div>
+                        <div className="font-medium text-slate-900">{policy.tokenName}</div>
                         <div className="text-sm text-slate-500">{policy.tokenSymbol}</div>
                       </div>
                     </TableCell>
@@ -117,9 +117,9 @@ export default function PoliciesPage() {
                     <TableCell>
                       <StatusBadge status={policy.allowlistMode ? "allowlist" : "blocklist"} />
                     </TableCell>
-                    <TableCell className="text-slate-300">{policy.allowlistCount}</TableCell>
-                    <TableCell className="text-slate-300">{policy.blocklistCount}</TableCell>
-                    <TableCell className="hidden sm:table-cell text-slate-500 text-sm">
+                    <TableCell className="text-slate-700">{policy.allowlistCount}</TableCell>
+                    <TableCell className="text-slate-700">{policy.blocklistCount}</TableCell>
+                    <TableCell className="hidden sm:table-cell text-slate-600 text-sm">
                       {new Date(policy.updatedAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>

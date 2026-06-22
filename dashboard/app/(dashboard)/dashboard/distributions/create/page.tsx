@@ -152,23 +152,23 @@ export default function CreateDistributionPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Create Distribution</h1>
-          <p className="text-sm text-slate-400 mt-1">Set up Merkle-based token distributions and claims</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Create Distribution</h1>
+          <p className="text-sm text-slate-600 mt-1">Set up Merkle-based token distributions and claims</p>
         </div>
       </div>
 
       <Tabs defaultValue="create" className="w-full">
-        <TabsList className="bg-slate-800 border-slate-700">
-          <TabsTrigger value="create" className="data-[state=active]:bg-slate-700">Create Escrow</TabsTrigger>
-          <TabsTrigger value="claim" className="data-[state=active]:bg-slate-700">Claim Distribution</TabsTrigger>
+        <TabsList className="bg-slate-100 border-slate-200">
+          <TabsTrigger value="create" className="data-[state=active]:bg-white data-[state=active]:text-slate-900">Create Escrow</TabsTrigger>
+          <TabsTrigger value="claim" className="data-[state=active]:bg-white data-[state=active]:text-slate-900">Claim Distribution</TabsTrigger>
         </TabsList>
 
         <TabsContent value="create" className="mt-4">
           <form onSubmit={handleCreate}>
-            <Card className="border-slate-800 bg-slate-900/50">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-white">Distribution Escrow</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardTitle className="text-slate-900">Distribution Escrow</CardTitle>
+                <CardDescription className="text-slate-600">
                   Create a Merkle-based distribution escrow. Mint tokens into the escrow ATA before creating.
                 </CardDescription>
               </CardHeader>
@@ -176,7 +176,7 @@ export default function CreateDistributionPage() {
                 <div>
                   <Label htmlFor="token">Token</Label>
                   {tokensLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin text-slate-600 mt-2" />
+                    <Loader2 className="h-4 w-4 animate-spin text-slate-500 mt-2" />
                   ) : (
                     <select
                       id="token"
@@ -186,7 +186,7 @@ export default function CreateDistributionPage() {
                         const t = tokens.find((t) => t.mintAddress === e.target.value);
                         setSelectedTokenName(t ? `${t.name} (${t.symbol})` : "");
                       }}
-                      className="w-full mt-1 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full mt-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     >
                       <option value="">Select a token...</option>
                       {tokens.map((t) => (
@@ -225,7 +225,7 @@ export default function CreateDistributionPage() {
                     className="w-32"
                   />
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-600">
                   After creating the escrow, mint tokens into the escrow ATA so claimants can redeem against the Merkle tree.
                 </p>
                 <Button type="submit" disabled={loading || (!selectedToken && !claimTokenAddress) || !merkleRoot} className="w-full">
@@ -239,10 +239,10 @@ export default function CreateDistributionPage() {
 
         <TabsContent value="claim" className="mt-4">
           <form onSubmit={handleClaim}>
-            <Card className="border-slate-800 bg-slate-900/50">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-white">Claim Tokens</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardTitle className="text-slate-900">Claim Tokens</CardTitle>
+                <CardDescription className="text-slate-600">
                   Claim tokens from a distribution using your Merkle proof.
                 </CardDescription>
               </CardHeader>
@@ -295,7 +295,7 @@ export default function CreateDistributionPage() {
                   </div>
                 </div>
                 <div>
-                  <Label className="text-xs text-slate-400">Merkle Proof (up to 2 elements, 32-byte hex each)</Label>
+                  <Label className="text-xs text-slate-600">Merkle Proof (up to 2 elements, 32-byte hex each)</Label>
                   <div className="grid grid-cols-1 gap-2 mt-1">
                     <Input value={proofHex1} onChange={(e) => setProofHex1(e.target.value)} placeholder="Proof element 1 (hex)" />
                     <Input value={proofHex2} onChange={(e) => setProofHex2(e.target.value)} placeholder="Proof element 2 (hex)" />

@@ -120,16 +120,16 @@ export default function PolicyDetailPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Policy Management</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Policy Management</h1>
+          <p className="text-sm text-slate-600">
             <AddressLabel address={mintAddress} />
           </p>
         </div>
       </div>
 
-      <Card className="border-slate-800 bg-slate-900/50">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">Policy Settings</CardTitle>
+          <CardTitle className="text-slate-900">Policy Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {!policy ? (
@@ -152,14 +152,14 @@ export default function PolicyDetailPage() {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <div className="text-sm text-slate-400">
-                Mode: <span className="text-white">{policy.allowlistMode ? "Allowlist" : "Blocklist"}</span>
+              <div className="text-sm text-slate-600">
+                Mode: <span className="text-slate-900">{policy.allowlistMode ? "Allowlist" : "Blocklist"}</span>
               </div>
-              <div className="text-sm text-slate-400">
-                Allowlist: <span className="text-white">{policy.allowlist?.length || 0}</span>
+              <div className="text-sm text-slate-600">
+                Allowlist: <span className="text-slate-900">{policy.allowlist?.length || 0}</span>
               </div>
-              <div className="text-sm text-slate-400">
-                Blocklist: <span className="text-white">{policy.blocklist?.length || 0}</span>
+              <div className="text-sm text-slate-600">
+                Blocklist: <span className="text-slate-900">{policy.blocklist?.length || 0}</span>
               </div>
             </div>
           )}
@@ -169,10 +169,10 @@ export default function PolicyDetailPage() {
       {policy && (
         <div className="grid gap-6 md:grid-cols-2">
           {/* Allowlist */}
-          <Card className="border-slate-800 bg-slate-900/50">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-white text-lg">Allowlist</CardTitle>
-              <CardDescription className="text-slate-400">Approved wallets</CardDescription>
+              <CardTitle className="text-slate-900 text-lg">Allowlist</CardTitle>
+              <CardDescription className="text-slate-600">Approved wallets</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
@@ -180,7 +180,6 @@ export default function PolicyDetailPage() {
                   value={walletAddress}
                   onChange={(e) => setWalletAddress(e.target.value)}
                   placeholder="Enter wallet address..."
-                  className="border-slate-700 bg-slate-800"
                 />
                 <Button onClick={handleAddToAllowlist} disabled={actionLoading !== null || !walletAddress}>
                   {actionLoading === "addToAllowlist" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
@@ -189,7 +188,7 @@ export default function PolicyDetailPage() {
               {policy.allowlist && policy.allowlist.length > 0 ? (
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {policy.allowlist.map((addr) => (
-                    <div key={addr} className="flex items-center justify-between p-2 bg-slate-800 rounded">
+                    <div key={addr} className="flex items-center justify-between p-2 bg-slate-50 rounded">
                       <AddressLabel address={addr} />
                       <Button
                         variant="ghost"
@@ -197,7 +196,7 @@ export default function PolicyDetailPage() {
                         onClick={() => executeAction("removeFromAllowlist", { wallet: addr })}
                         disabled={actionLoading !== null}
                       >
-                        <Trash2 className="h-3 w-3 text-red-400" />
+                        <Trash2 className="h-3 w-3 text-red-500" />
                       </Button>
                     </div>
                   ))}
@@ -209,10 +208,10 @@ export default function PolicyDetailPage() {
           </Card>
 
           {/* Blocklist */}
-          <Card className="border-slate-800 bg-slate-900/50">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-white text-lg">Blocklist</CardTitle>
-              <CardDescription className="text-slate-400">Blocked wallets</CardDescription>
+              <CardTitle className="text-slate-900 text-lg">Blocklist</CardTitle>
+              <CardDescription className="text-slate-600">Blocked wallets</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
@@ -220,7 +219,6 @@ export default function PolicyDetailPage() {
                   value={walletAddress}
                   onChange={(e) => setWalletAddress(e.target.value)}
                   placeholder="Enter wallet address..."
-                  className="border-slate-700 bg-slate-800"
                 />
                 <Button variant="destructive" onClick={handleAddToBlocklist} disabled={actionLoading !== null || !walletAddress}>
                   {actionLoading === "addToBlocklist" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
@@ -229,7 +227,7 @@ export default function PolicyDetailPage() {
               {policy.blocklist && policy.blocklist.length > 0 ? (
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {policy.blocklist.map((addr) => (
-                    <div key={addr} className="flex items-center justify-between p-2 bg-slate-800 rounded">
+                    <div key={addr} className="flex items-center justify-between p-2 bg-slate-50 rounded">
                       <AddressLabel address={addr} />
                       <Button
                         variant="ghost"
@@ -237,7 +235,7 @@ export default function PolicyDetailPage() {
                         onClick={() => executeAction("removeFromBlocklist", { wallet: addr })}
                         disabled={actionLoading !== null}
                       >
-                        <Trash2 className="h-3 w-3 text-red-400" />
+                        <Trash2 className="h-3 w-3 text-red-500" />
                       </Button>
                     </div>
                   ))}

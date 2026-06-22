@@ -114,14 +114,14 @@ export function FampPolicyForm() {
       </div>
 
       {policy && (
-        <div className="p-3 bg-slate-900 rounded-lg text-sm space-y-1">
-          <div>Allowlist Mode: <span className="text-green-400">{policy.allowlistMode ? "ON" : "OFF"}</span></div>
+        <div className="p-3 bg-slate-50 rounded-lg text-sm space-y-1">
+          <div>Allowlist Mode: <span className="text-green-600">{policy.allowlistMode ? "ON" : "OFF"}</span></div>
           <div>Allowlist ({policy.allowlistCount}): {policy.allowlist.length > 0 ? policy.allowlist.join(", ") : "empty"}</div>
           <div>Blocklist ({policy.blocklistCount}): {policy.blocklist.length > 0 ? policy.blocklist.join(", ") : "empty"}</div>
         </div>
       )}
 
-      <div className="flex gap-1 bg-slate-800 p-1 rounded-lg">
+      <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
         {tabs.map((tab) => (
           <Button
             key={tab.key}

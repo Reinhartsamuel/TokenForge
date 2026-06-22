@@ -78,23 +78,23 @@ export default function MintTokenPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Mint Tokens</h1>
-          <p className="text-sm text-slate-400 mt-1">Mint security tokens to a destination wallet</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Mint Tokens</h1>
+          <p className="text-sm text-slate-600 mt-1">Mint security tokens to a destination wallet</p>
         </div>
       </div>
 
       <form onSubmit={handleMint}>
-        <Card className="border-slate-800 bg-slate-900/50">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-white">Mint Configuration</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardTitle className="text-slate-900">Mint Configuration</CardTitle>
+            <CardDescription className="text-slate-600">
               Tokens minted via backend keypair signer. ATA auto-created if missing.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
               <Label htmlFor="mintAddr">Token Mint Address</Label>
-              <Input id="mintAddr" value={mintAddress} disabled className="bg-slate-800" />
+              <Input id="mintAddr" value={mintAddress} disabled />
             </div>
             <div>
               <Label htmlFor="destination">Destination (optional)</Label>

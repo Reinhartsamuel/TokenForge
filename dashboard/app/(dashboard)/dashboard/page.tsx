@@ -98,8 +98,8 @@ export default function OverviewPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard Overview</h1>
-          <p className="text-sm text-muted-foreground mt-1">Monitor your security tokens and operations</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard Overview</h1>
+          <p className="text-sm text-slate-600 mt-1">Monitor your security tokens and operations</p>
         </div>
       </div>
 
@@ -107,16 +107,16 @@ export default function OverviewPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {kpiCards.map((kpi) => (
           <Link key={kpi.title} href={kpi.link}>
-            <Card className="hover:border-slate-700 transition-colors cursor-pointer">
+            <Card className="hover:border-slate-300 transition-colors cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{kpi.title}</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-600">{kpi.title}</CardTitle>
                 <div className={`p-2 rounded-lg ${kpi.bgColor}`}>
                   <kpi.icon className={`h-4 w-4 ${kpi.color}`} />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">
-                  {loading ? <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /> : kpi.value}
+                <div className="text-2xl font-bold text-slate-900">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin text-slate-400" /> : kpi.value}
                 </div>
               </CardContent>
             </Card>
@@ -130,8 +130,8 @@ export default function OverviewPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-foreground">Recent Activity</CardTitle>
-                <CardDescription className="text-muted-foreground">Latest on-chain transactions</CardDescription>
+                <CardTitle className="text-slate-900">Recent Activity</CardTitle>
+                <CardDescription className="text-slate-600">Latest on-chain transactions</CardDescription>
               </div>
               <Link href="/dashboard/activity">
                 <Button variant="outline" size="sm">View All</Button>
@@ -141,28 +141,28 @@ export default function OverviewPage() {
           <CardContent>
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
               </div>
             ) : recentTx.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">No transactions yet</div>
+              <div className="text-center py-8 text-slate-500 text-sm">No transactions yet</div>
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="text-muted-foreground">Type</TableHead>
-                    <TableHead className="text-muted-foreground">Token</TableHead>
-                    <TableHead className="text-muted-foreground hidden md:table-cell">From</TableHead>
-                    <TableHead className="text-muted-foreground">Status</TableHead>
-                    <TableHead className="text-muted-foreground hidden sm:table-cell">Time</TableHead>
+                  <TableRow className="border-slate-200 hover:bg-transparent">
+                    <TableHead className="text-slate-600">Type</TableHead>
+                    <TableHead className="text-slate-600">Token</TableHead>
+                    <TableHead className="text-slate-600 hidden md:table-cell">From</TableHead>
+                    <TableHead className="text-slate-600">Status</TableHead>
+                    <TableHead className="text-slate-600 hidden sm:table-cell">Time</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentTx.map((tx) => (
-                    <TableRow key={tx.id} className="border-border hover:bg-muted/50">
+                    <TableRow key={tx.id} className="border-slate-200 hover:bg-slate-50">
                       <TableCell>
                         <StatusBadge status={tx.type} />
                       </TableCell>
-                      <TableCell className="text-foreground">
+                      <TableCell className="text-slate-900">
                         {tx.tokenName ? `${tx.tokenName} (${tx.tokenSymbol})` : "—"}
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
@@ -171,7 +171,7 @@ export default function OverviewPage() {
                       <TableCell>
                         <StatusBadge status={tx.status} />
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
+                      <TableCell className="hidden sm:table-cell text-slate-500 text-sm">
                         {new Date(tx.createdAt).toLocaleDateString()}
                       </TableCell>
                     </TableRow>
@@ -185,8 +185,8 @@ export default function OverviewPage() {
         {/* Quick Actions */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-foreground">Quick Actions</CardTitle>
-            <CardDescription className="text-muted-foreground">Common operations</CardDescription>
+            <CardTitle className="text-slate-900">Quick Actions</CardTitle>
+            <CardDescription className="text-slate-600">Common operations</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {quickActions.map((action) => (
@@ -200,10 +200,10 @@ export default function OverviewPage() {
                 </Button>
               </Link>
             ))}
-            <div className="pt-4 border-t border-border">
-              <div className="text-xs text-muted-foreground mb-2">Network</div>
-              <div className="flex items-center gap-2 text-sm text-foreground">
-                <div className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
+            <div className="pt-4 border-t border-slate-200">
+              <div className="text-xs text-slate-500 mb-2">Network</div>
+              <div className="flex items-center gap-2 text-sm text-slate-700">
+                <div className="h-2 w-2 rounded-full bg-sky-500 animate-pulse" />
                 Solana Devnet
               </div>
             </div>

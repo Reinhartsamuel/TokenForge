@@ -68,22 +68,22 @@ export default function ActivityPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Activity</h1>
-        <p className="text-sm text-slate-400 mt-1">Full transaction log across all tokens</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Activity</h1>
+        <p className="text-sm text-slate-600 mt-1">Full transaction log across all tokens</p>
       </div>
 
-      <Card className="border-slate-800 bg-slate-900/50">
+      <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between gap-4">
-            <CardTitle className="text-white">Transaction Log</CardTitle>
+            <CardTitle className="text-slate-900">Transaction Log</CardTitle>
             <div className="flex items-center gap-2">
               <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   placeholder="Search transactions..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 border-slate-700 bg-slate-800"
+                  className="pl-9"
                 />
               </div>
               <DropdownMenu>
@@ -93,12 +93,12 @@ export default function ActivityPage() {
                     Filter
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+                <DropdownMenuContent align="end">
                   {txTypes.map((type) => (
                     <DropdownMenuItem
                       key={type}
                       onClick={() => setTypeFilter(type)}
-                      className={typeFilter === type ? "bg-slate-700" : ""}
+                      className={typeFilter === type ? "bg-slate-100" : ""}
                     >
                       {type === "all" ? "All Types" : type}
                     </DropdownMenuItem>
@@ -111,37 +111,37 @@ export default function ActivityPage() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-slate-600" />
+              <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-12">
-              <Activity className="h-12 w-12 mx-auto text-slate-700 mb-3" />
-              <p className="text-slate-500">No transactions found</p>
+              <Activity className="h-12 w-12 mx-auto text-slate-400 mb-3" />
+              <p className="text-slate-600">No transactions found</p>
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="border-slate-800 hover:bg-transparent">
-                  <TableHead className="text-slate-400">Timestamp</TableHead>
-                  <TableHead className="text-slate-400">Type</TableHead>
-                  <TableHead className="text-slate-400">Token</TableHead>
-                  <TableHead className="text-slate-400 hidden lg:table-cell">From</TableHead>
-                  <TableHead className="text-slate-400 hidden lg:table-cell">To</TableHead>
-                  <TableHead className="text-slate-400 hidden md:table-cell">Amount</TableHead>
-                  <TableHead className="text-slate-400">Status</TableHead>
-                  <TableHead className="text-slate-400 w-[50px]"></TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="text-slate-600">Timestamp</TableHead>
+                  <TableHead className="text-slate-600">Type</TableHead>
+                  <TableHead className="text-slate-600">Token</TableHead>
+                  <TableHead className="text-slate-600 hidden lg:table-cell">From</TableHead>
+                  <TableHead className="text-slate-600 hidden lg:table-cell">To</TableHead>
+                  <TableHead className="text-slate-600 hidden md:table-cell">Amount</TableHead>
+                  <TableHead className="text-slate-600">Status</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((tx) => (
-                  <TableRow key={tx.id} className="border-slate-800 hover:bg-slate-800/50">
-                    <TableCell className="text-slate-500 text-sm">
+                  <TableRow key={tx.id} className="hover:bg-slate-50">
+                    <TableCell className="text-slate-600 text-sm">
                       {new Date(tx.createdAt).toLocaleString()}
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={tx.type} />
                     </TableCell>
-                    <TableCell className="text-slate-300">
+                    <TableCell className="text-slate-700">
                       {tx.tokenName ? `${tx.tokenName} (${tx.tokenSymbol})` : "—"}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
@@ -150,7 +150,7 @@ export default function ActivityPage() {
                     <TableCell className="hidden lg:table-cell">
                       {tx.toAddress ? <AddressLabel address={tx.toAddress} /> : "—"}
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-slate-300">{tx.amount || "—"}</TableCell>
+                    <TableCell className="hidden md:table-cell text-slate-700">{tx.amount || "—"}</TableCell>
                     <TableCell>
                       <StatusBadge status={tx.status} />
                     </TableCell>

@@ -80,6 +80,11 @@ export const tokensRelations = relations(tokens, ({ many }) => ({
   transactions: many(transactions),
   fampPolicy: many(fampPolicies),
   distributions: many(distributions),
+  holdings: many(investorHoldings),
+  corporateActions: many(corporateActions),
+  navRecords: many(navRecords),
+  tranches: many(tranches),
+  complianceRules: many(complianceRules),
 }));
 
 export const transactionsRelations = relations(transactions, ({ one }) => ({
@@ -116,5 +121,132 @@ export const distributionClaimsRelations = relations(distributionClaims, ({ one 
   distribution: one(distributions, {
     fields: [distributionClaims.distributionId],
     references: [distributions.id],
+  }),
+}));
+
+export const investors = pgTable("investors", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  walletAddress: varchar("wallet_address", { length: 44 }).unique(),
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 255 }),
+  entityType: varchar("entity_type", { length: 50 }),
+  jurisdiction: varchar("jurisdiction", { length: 10 }),
+  kycStatus: varchar("kyc_status", { length: 20 }).default("pending"),
+  accreditationStatus: varchar("accreditation_status", { length: 20 }),
+  accreditationExpiry: timestamp("accreditation_expiry"),
+  amlStatus: varchar("aml_status", { length: 20 }).default("pending"),
+  pepStatus: boolean("pep_status").default(false),
+  sanctionsStatus: varchar("sanctions_status", { length: 20 }).default("pending"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const investorHoldings = pgTable("investor_holdings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  investorId: uuid("investor_id").references(() => investors.id).notNull(),
+  tokenId: uuid("token_id").references(() => tokens.id).notNull(),
+  tokenAccountAddress: varchar("token_account_address", { length: 44 }).unique(),
+  balance: numeric("balance", { precision: 30, scale: 9 }).default("0"),
+  ownershipPercentage: numeric("ownership_percentage", { precision: 5, scale: 4 }),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const corporateActions = pgTable("corporate_actions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tokenId: uuid("token_id").references(() => tokens.id).notNull(),
+  type: varchar("type", { length: 50 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 20 }).default("pending"),
+  executionDate: timestamp("execution_date"),
+  snapshotDate: timestamp("snapshot_date"),
+  totalAmount: numeric("total_amount", { precision: 30, scale: 9 }),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const navRecords = pgTable("nav_records", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tokenId: uuid("token_id").references(() => tokens.id).notNull(),
+  navPerToken: numeric("nav_per_token", { precision: 30, scale: 9 }).notNull(),
+  totalAssets: numeric("total_assets", { precision: 30, scale: 9 }),
+  totalLiabilities: numeric("total_liabilities", { precision: 30, scale: 9 }),
+  outstandingTokens: numeric("outstanding_tokens", { precision: 30, scale: 9 }),
+  valuationDate: timestamp("valuation_date").notNull(),
+  source: varchar("source", { length: 50 }),
+  verifiedBy: varchar("verified_by", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const tranches = pgTable("tranches", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  spvTokenId: uuid("spv_token_id").references(() => tokens.id).notNull(),
+  trancheTokenId: uuid("tranche_token_id").references(() => tokens.id),
+  trancheType: varchar("tranche_type", { length: 20 }).notNull(),
+  priority: integer("priority").notNull(),
+  targetAllocation: numeric("target_allocation", { precision: 5, scale: 4 }),
+  couponRate: numeric("coupon_rate", { precision: 5, scale: 4 }),
+  minSubscription: numeric("min_subscription", { precision: 30, scale: 9 }),
+  maxSubscription: numeric("max_subscription", { precision: 30, scale: 9 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const complianceRules = pgTable("compliance_rules", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tokenId: uuid("token_id").references(() => tokens.id).notNull(),
+  ruleType: varchar("rule_type", { length: 50 }).notNull(),
+  ruleConfig: jsonb("rule_config").notNull(),
+  enabled: boolean("enabled").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const investorsRelations = relations(investors, ({ many }) => ({
+  holdings: many(investorHoldings),
+}));
+
+export const investorHoldingsRelations = relations(investorHoldings, ({ one }) => ({
+  investor: one(investors, {
+    fields: [investorHoldings.investorId],
+    references: [investors.id],
+  }),
+  token: one(tokens, {
+    fields: [investorHoldings.tokenId],
+    references: [tokens.id],
+  }),
+}));
+
+export const corporateActionsRelations = relations(corporateActions, ({ one }) => ({
+  token: one(tokens, {
+    fields: [corporateActions.tokenId],
+    references: [tokens.id],
+  }),
+}));
+
+export const navRecordsRelations = relations(navRecords, ({ one }) => ({
+  token: one(tokens, {
+    fields: [navRecords.tokenId],
+    references: [tokens.id],
+  }),
+}));
+
+export const tranchesRelations = relations(tranches, ({ one }) => ({
+  spvToken: one(tokens, {
+    fields: [tranches.spvTokenId],
+    references: [tokens.id],
+  }),
+  trancheToken: one(tokens, {
+    fields: [tranches.trancheTokenId],
+    references: [tokens.id],
+  }),
+}));
+
+export const complianceRulesRelations = relations(complianceRules, ({ one }) => ({
+  token: one(tokens, {
+    fields: [complianceRules.tokenId],
+    references: [tokens.id],
   }),
 }));

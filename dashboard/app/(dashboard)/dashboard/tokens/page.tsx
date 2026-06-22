@@ -52,10 +52,10 @@ export default function TokensPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Tokens</h1>
-          <p className="text-sm text-slate-400 mt-1">Manage your security tokens</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Tokens</h1>
+        <p className="text-sm text-slate-600 mt-1">Manage your security tokens</p>
+      </div>
         <Link href="/dashboard/tokens/create">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
@@ -64,17 +64,17 @@ export default function TokensPage() {
         </Link>
       </div>
 
-      <Card className="border-slate-800 bg-slate-900/50">
+      <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-white">All Tokens</CardTitle>
+            <CardTitle className="text-slate-900">All Tokens</CardTitle>
             <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search tokens..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 border-slate-700 bg-slate-800"
+                className="pl-9"
               />
             </div>
           </div>
@@ -82,12 +82,12 @@ export default function TokensPage() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-slate-600" />
+              <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-12">
-              <Coins className="h-12 w-12 mx-auto text-slate-700 mb-3" />
-              <p className="text-slate-500 mb-4">No tokens found</p>
+              <Coins className="h-12 w-12 mx-auto text-slate-400 mb-3" />
+              <p className="text-slate-600 mb-4">No tokens found</p>
               <Link href="/dashboard/tokens/create">
                 <Button size="sm">Create your first token</Button>
               </Link>
@@ -95,36 +95,36 @@ export default function TokensPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="border-slate-800 hover:bg-transparent">
-                  <TableHead className="text-slate-400">Token</TableHead>
-                  <TableHead className="text-slate-400 hidden md:table-cell">Mint Address</TableHead>
-                  <TableHead className="text-slate-400">Decimals</TableHead>
-                  <TableHead className="text-slate-400">Network</TableHead>
-                  <TableHead className="text-slate-400">Status</TableHead>
-                  <TableHead className="text-slate-400 hidden sm:table-cell">Created</TableHead>
-                  <TableHead className="text-slate-400 w-[50px]"></TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="text-slate-600">Token</TableHead>
+                  <TableHead className="text-slate-600 hidden md:table-cell">Mint Address</TableHead>
+                  <TableHead className="text-slate-600">Decimals</TableHead>
+                  <TableHead className="text-slate-600">Network</TableHead>
+                  <TableHead className="text-slate-600">Status</TableHead>
+                  <TableHead className="text-slate-600 hidden sm:table-cell">Created</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((token) => (
-                  <TableRow key={token.id} className="border-slate-800 hover:bg-slate-800/50">
+                  <TableRow key={token.id} className="hover:bg-slate-50">
                     <TableCell className="hover:cursor-pointer" onClick={() => router.push(`/dashboard/tokens/${token.mintAddress}`)}>
                       <div>
-                        <div className="font-medium text-white">{token.name}</div>
+                        <div className="font-medium text-slate-900">{token.name}</div>
                         <div className="text-sm text-slate-500">{token.symbol}</div>
                       </div>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <AddressLabel address={token.mintAddress} />
                     </TableCell>
-                    <TableCell className="text-slate-300">{token.decimals}</TableCell>
+                    <TableCell className="text-slate-700">{token.decimals}</TableCell>
                     <TableCell>
                       <StatusBadge status={token.network} />
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={token.status} />
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell text-slate-500 text-sm">
+                    <TableCell className="hidden sm:table-cell text-slate-600 text-sm">
                       {new Date(token.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
@@ -137,7 +137,7 @@ export default function TokensPage() {
                             </svg>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+                        <DropdownMenuContent align="end">
                           <DropdownMenuItem>
                             <Link href={`/dashboard/tokens/${token.mintAddress}`} className="w-full">View Details</Link>
                           </DropdownMenuItem>

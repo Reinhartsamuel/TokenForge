@@ -37,23 +37,23 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Settings</h1>
-        <p className="text-sm text-slate-400 mt-1">Configure your TokenForge dashboard</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Settings</h1>
+        <p className="text-sm text-slate-600 mt-1">Configure your TokenForge dashboard</p>
       </div>
 
-      <Card className="border-slate-800 bg-slate-900/50">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">Network Configuration</CardTitle>
-          <CardDescription className="text-slate-400">Select the Solana network and RPC endpoint</CardDescription>
+          <CardTitle className="text-slate-900">Network Configuration</CardTitle>
+          <CardDescription className="text-slate-600">Select the Solana network and RPC endpoint</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
             <Label htmlFor="network">Network</Label>
             <Select value={network} onValueChange={setNetwork}>
-              <SelectTrigger id="network" className="border-slate-700 bg-slate-800">
+              <SelectTrigger id="network">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-700">
+              <SelectContent>
                 <SelectItem value="devnet">Devnet</SelectItem>
                 <SelectItem value="mainnet" disabled>Mainnet (coming soon)</SelectItem>
               </SelectContent>
@@ -67,25 +67,24 @@ export default function SettingsPage() {
               value={rpcEndpoint}
               onChange={(e) => setRpcEndpoint(e.target.value)}
               placeholder="https://api.devnet.solana.com"
-              className="border-slate-700 bg-slate-800"
             />
           </div>
 
-          <Separator className="bg-slate-800" />
+          <Separator />
 
           <div>
-            <h3 className="text-sm font-medium text-white mb-2">Wallet Connection</h3>
+            <h3 className="text-sm font-medium text-slate-900 mb-2">Wallet Connection</h3>
             <div className="flex items-center gap-2 text-sm">
-              <div className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
-              <span className="text-slate-300">Connected to {network}</span>
+              <div className="h-2 w-2 rounded-full bg-sky-500 animate-pulse" />
+              <span className="text-slate-700">Connected to {network}</span>
             </div>
           </div>
 
-          <Separator className="bg-slate-800" />
+          <Separator />
 
           <div>
-            <h3 className="text-sm font-medium text-white mb-2">Storage</h3>
-            <div className="text-sm text-slate-400">
+            <h3 className="text-sm font-medium text-slate-900 mb-2">Storage</h3>
+            <div className="text-sm text-slate-600">
               <p>Metadata storage: Cloudflare R2</p>
               <p className="mt-1">Token data: PostgreSQL (Railway)</p>
             </div>

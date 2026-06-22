@@ -27,30 +27,30 @@ export function AddressLabel({ address, chars = 4, className = "" }: AddressLabe
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger className={`inline-flex items-center gap-1.5 font-mono text-sm ${className}`}>
-          <span>{shortenAddress(address, chars)}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-5 w-5 hover:bg-slate-700"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
-          >
-            {copied ? (
-              <Check className="h-3 w-3 text-green-400" />
-            ) : (
-              <Copy className="h-3 w-3 text-slate-400" />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="font-mono text-xs">{address}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <span className={`inline-flex items-center gap-1.5 font-mono text-sm ${className}`}>
+      <span>{shortenAddress(address, chars)}</span>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <span
+              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCopy();
+              }}
+            >
+              {copied ? (
+                <Check className="h-3 w-3 text-green-600" />
+              ) : (
+                <Copy className="h-3 w-3 text-slate-500" />
+              )}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="font-mono text-xs">{address}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </span>
   );
 }
