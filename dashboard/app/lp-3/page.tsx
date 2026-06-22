@@ -1,5 +1,9 @@
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
+import { TheGoldSection } from "./components/TheGoldSection";
+import { PainPointsSection } from "./components/PainPointsSection";
+import { StatsSection } from "./components/StatsSection";
+import { SocialProofSection } from "./components/SocialProofSection";
 import { VantaFogSection } from "./components/VantaFogSection";
 import { TrustBarSection } from "./components/TrustBarSection";
 import { PlatformOverview } from "./components/PlatformOverview";
@@ -9,8 +13,7 @@ import { TranchingWorkflow } from "./components/TranchingWorkflow";
 import { HowItWorksSection } from "./components/HowItWorksSection";
 import { ComparisonSection } from "./components/ComparisonSection";
 import { UseCasesSection } from "./components/UseCasesSection";
-import { StatsSection } from "./components/StatsSection";
-import { CTASection } from "./components/CTASection";
+import { UrgencyCTASection } from "./components/UrgencyCTASection";
 import { FooterSection } from "./components/FooterSection";
 
 export default function Lp3Page() {
@@ -19,7 +22,10 @@ export default function Lp3Page() {
       <Navbar />
       <main>
         <HeroSection />
+        <TheGoldSection />
+        <PainPointsSection />
         <StatsSection />
+        <SocialProofSection />
         <VantaFogSection />
         <TrustBarSection />
         <PlatformOverview />
@@ -29,7 +35,7 @@ export default function Lp3Page() {
         <HowItWorksSection />
         <ComparisonSection />
         <UseCasesSection />
-        <CTASection />
+        <UrgencyCTASection />
       </main>
       <FooterSection />
     </div>

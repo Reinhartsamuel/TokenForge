@@ -1,39 +1,41 @@
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
-import { ProblemSection } from "./components/ProblemSection";
-import { SolutionSection } from "./components/SolutionSection";
-import { HowItWorksSection } from "./components/HowItWorksSection";
-import { ArchitectureSection } from "./components/ArchitectureSection";
+import { TheGoldSection } from "./components/TheGoldSection";
+import { PainPointsSection } from "./components/PainPointsSection";
 import { StatsSection } from "./components/StatsSection";
+import { SocialProofSection } from "./components/SocialProofSection";
+import { VantaFogSection } from "./components/VantaFogSection";
+import { TrustBarSection } from "./components/TrustBarSection";
+import { PlatformOverview } from "./components/PlatformOverview";
+import { IssuerDashboard } from "./components/IssuerDashboard";
+import { ComplianceEngine } from "./components/ComplianceEngine";
+import { TranchingWorkflow } from "./components/TranchingWorkflow";
+import { HowItWorksSection } from "./components/HowItWorksSection";
 import { ComparisonSection } from "./components/ComparisonSection";
-import { RoadmapSection } from "./components/RoadmapSection";
-import { CTASection } from "./components/CTASection";
+import { UseCasesSection } from "./components/UseCasesSection";
+import { UrgencyCTASection } from "./components/UrgencyCTASection";
 import { FooterSection } from "./components/FooterSection";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0F0F23] text-white">
+    <div className="min-h-screen text-slate-900">
       <Navbar />
       <main>
         <HeroSection />
-        <div id="problem">
-          <ProblemSection />
-        </div>
-        <div id="solution">
-          <SolutionSection />
-        </div>
-        <div id="how-it-works">
-          <HowItWorksSection />
-        </div>
-        <div id="architecture">
-          <ArchitectureSection />
-        </div>
+        <TheGoldSection />
+        <PainPointsSection />
         <StatsSection />
+        <SocialProofSection />
+        <VantaFogSection />
+        <TrustBarSection />
+        <PlatformOverview />
+        <IssuerDashboard />
+        <ComplianceEngine />
+        <TranchingWorkflow />
+        <HowItWorksSection />
         <ComparisonSection />
-        <div id="roadmap">
-          <RoadmapSection />
-        </div>
-        <CTASection />
+        <UseCasesSection />
+        <UrgencyCTASection />
       </main>
       <FooterSection />
     </div>

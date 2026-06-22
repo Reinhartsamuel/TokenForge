@@ -2,62 +2,46 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Code2, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0F0F23]/80 backdrop-blur-md border-b border-slate-800">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-black/30 border-b border-white/10">
       <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
               <img src="/anviltokenforge2.webp" alt="TokenForge" className="h-8 w-8" />
-              <span className="text-xl font-bold text-white">TokenForge</span>
+              <span className="font-[family-name:var(--font-heading)] text-xl font-bold text-white">TokenForge</span>
             </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#problem" className="text-sm text-[#8B8BA7] hover:text-white transition-colors">
-              Problem
+            <a href="#platform" className="text-sm text-white/80 hover:text-white transition-colors">
+              Platform
             </a>
-            <a href="#solution" className="text-sm text-[#8B8BA7] hover:text-white transition-colors">
-              Solution
+            <a href="#compliance" className="text-sm text-white/80 hover:text-white transition-colors">
+              Compliance
             </a>
-            <a href="#how-it-works" className="text-sm text-[#8B8BA7] hover:text-white transition-colors">
-              How It Works
+            <a href="#use-cases" className="text-sm text-white/80 hover:text-white transition-colors">
+              Use Cases
             </a>
-            <a href="#architecture" className="text-sm text-[#8B8BA7] hover:text-white transition-colors">
-              Architecture
-            </a>
-            <a href="#roadmap" className="text-sm text-[#8B8BA7] hover:text-white transition-colors">
-              Roadmap
-            </a>
-            <Link href="/pitch-deck.html" className="text-sm text-[#14F195] hover:text-[#14F195]/80 transition-colors font-medium">
-              Pitch Deck
-            </Link>
-            <Link href="/docs" className="text-sm text-[#8B8BA7] hover:text-white transition-colors">
+            <Link href="/docs" className="text-sm text-white/80 hover:text-white transition-colors">
               Docs
             </Link>
           </div>
 
-          <div className="flex items-center gap-4">
-            <Button
-              size="sm"
-              variant="outline"
-              className="hidden sm:inline-flex border-slate-700 text-white hover:bg-slate-800"
-              onClick={() => window.open("https://github.com/reinhartsamuel/tokenforge", "_blank")}
-            >
-              <Code2 className="mr-2 h-4 w-4" />
-              GitHub
-            </Button>
+          <div className="flex items-center gap-3">
             <Link href="/dashboard">
-              <Button size="sm" className="bg-[#14F195] text-[#0F0F23] hover:bg-[#14F195]/90">
-                Launch App
-              </Button>
+              <button className="hidden sm:inline-flex h-9 px-4 items-center justify-center rounded-lg border border-white/30 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+                Sign In
+              </button>
             </Link>
+            <button className="h-9 px-4 inline-flex items-center justify-center rounded-lg bg-sky-600 text-sm font-medium text-white hover:bg-sky-700 transition-colors">
+              Request Demo
+            </button>
             <button
               className="md:hidden text-white"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -68,37 +52,20 @@ export function Navbar() {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-800">
+          <div className="md:hidden py-4 border-t border-white/20">
             <div className="flex flex-col gap-4">
-              <a href="#problem" className="text-sm text-[#8B8BA7] hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Problem
+              <a href="#platform" className="text-sm text-white/80 hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
+                Platform
               </a>
-              <a href="#solution" className="text-sm text-[#8B8BA7] hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Solution
+              <a href="#compliance" className="text-sm text-white/80 hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
+                Compliance
               </a>
-              <a href="#how-it-works" className="text-sm text-[#8B8BA7] hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
-                How It Works
+              <a href="#use-cases" className="text-sm text-white/80 hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
+                Use Cases
               </a>
-              <a href="#architecture" className="text-sm text-[#8B8BA7] hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Architecture
-              </a>
-              <a href="#roadmap" className="text-sm text-[#8B8BA7] hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Roadmap
-              </a>
-              <Link href="/pitch-deck.html" className="text-sm text-[#14F195] hover:text-[#14F195]/80 transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
-                Pitch Deck
-              </Link>
-              <Link href="/docs" className="text-sm text-[#8B8BA7] hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/docs" className="text-sm text-white/80 hover:text-white transition-colors" onClick={() => setIsMenuOpen(false)}>
                 Docs
               </Link>
-              <Button
-                size="sm"
-                className="sm:hidden border-slate-700 text-white hover:bg-slate-800 w-full justify-start"
-                onClick={() => window.open("https://github.com/reinhartsamuel/tokenforge", "_blank")}
-              >
-                <Code2 className="mr-2 h-4 w-4" />
-                GitHub
-              </Button>
             </div>
           </div>
         )}

@@ -1,67 +1,61 @@
-import { Wallet, Settings2, Send, ArrowRight } from "lucide-react";
+import { Settings, Upload, Rocket, BarChart3 } from "lucide-react";
 
 const steps = [
   {
-    number: "01",
-    icon: Wallet,
-    title: "Connect + Configure",
-    description:
-      "Connect your Solana wallet, configure KYC program settings, and deploy your security token with compliance extensions.",
-    accentColor: "#14F195",
+    icon: Settings,
+    step: "01",
+    title: "Structure",
+    description: "Define your asset pool, tranches, and compliance rules. Configure FAMP policies for each tranche.",
   },
   {
-    number: "02",
-    icon: Settings2,
-    title: "Mint + Manage",
-    description:
-      "Use the dashboard for all operations: minting, freeze/thaw, policy management, and verification controls.",
-    accentColor: "#9945FF",
+    icon: Upload,
+    step: "02",
+    title: "Configure",
+    description: "Upload investor list, set KYC requirements, and configure transfer restrictions.",
   },
   {
-    number: "03",
-    icon: Send,
-    title: "Distribute + Report",
-    description:
-      "Execute Merkle-based distributions, maintain holder registry, and generate compliance reports automatically.",
-    accentColor: "#14F195",
+    icon: Rocket,
+    step: "03",
+    title: "Issue",
+    description: "Deploy tokens on Solana with OJK-compliant transfer restrictions built into the smart contract.",
+  },
+  {
+    icon: BarChart3,
+    step: "04",
+    title: "Manage",
+    description: "Distribute yield, manage cap table, and generate regulatory reports from the dashboard.",
   },
 ];
 
 export function HowItWorksSection() {
   return (
-    <section className="py-24 bg-[#0F0F23]">
+    <section className="bg-gradient-to-b from-[#FAFBFC] to-white py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            How It{" "}
-            <span className="text-[#14F195]">Works</span>
+        <div className="mx-auto max-w-2xl text-center mb-16">
+          <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            From structure to issuance in 4 steps
           </h2>
-          <p className="mt-4 text-lg text-[#8B8BA7] max-w-2xl mx-auto">
-            Three steps from zero to compliant security token deployment.
+          <p className="mt-4 text-lg text-slate-600">
+            Launch your first compliant token offering in weeks, not months.
           </p>
         </div>
 
-        <div className="relative grid gap-12 md:grid-cols-3">
-          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-[#14F195] via-[#9945FF] to-[#14F195] hidden md:block -translate-y-1/2 opacity-20" />
-
-          {steps.map((step) => (
-            <div key={step.number} className="relative text-center">
-              <div className="relative z-10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border-2"
-                style={{ borderColor: step.accentColor }}
-              >
-                <step.icon className="h-7 w-7" style={{ color: step.accentColor }} />
-                <div
-                  className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-[#0F0F23]"
-                  style={{ backgroundColor: step.accentColor }}
-                >
-                  {step.number}
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step, idx) => (
+            <div key={idx} className="relative">
+              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm h-full">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-50 border border-sky-100">
+                    <step.icon className="h-5 w-5 text-sky-700" />
+                  </div>
+                  <span className="text-2xl font-bold text-slate-200">{step.step}</span>
                 </div>
+                <h3 className="font-[family-name:var(--font-heading)] text-lg font-semibold text-slate-900 mb-2">{step.title}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{step.description}</p>
               </div>
-
-              <h3 className="text-xl font-semibold text-white mb-3">{step.title}</h3>
-              <p className="text-sm text-[#8B8BA7] leading-relaxed max-w-xs mx-auto">
-                {step.description}
-              </p>
+              {idx < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-1/2 -right-4 h-px w-8 bg-slate-200" />
+              )}
             </div>
           ))}
         </div>

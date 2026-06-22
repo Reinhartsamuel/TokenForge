@@ -1,126 +1,98 @@
-import { Check, X } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Check, X, Minus } from "lucide-react";
 
-const competitors = [
+const features = [
   {
-    name: "TokenForge",
-    ssts: true,
-    openSource: true,
-    solanaNative: true,
-    sdkAndDashboard: true,
-    isHighlighted: true,
+    feature: "Cap table management",
+    manual: "Spreadsheets",
+    sdk: "Build your own",
+    tokenforge: "Built-in",
   },
   {
-    name: "Securitize",
-    ssts: false,
-    openSource: false,
-    solanaNative: false,
-    sdkAndDashboard: true,
-    isHighlighted: false,
+    feature: "Compliance enforcement",
+    manual: "Manual checks",
+    sdk: "DIY",
+    tokenforge: "Smart contract",
   },
   {
-    name: "Polymath",
-    ssts: false,
-    openSource: true,
-    solanaNative: false,
-    sdkAndDashboard: true,
-    isHighlighted: false,
+    feature: "Distribution orchestration",
+    manual: "Wire transfers",
+    sdk: "Build your own",
+    tokenforge: "Merkle-based",
   },
   {
-    name: "Manual Build",
-    ssts: true,
-    openSource: false,
-    solanaNative: true,
-    sdkAndDashboard: false,
-    isHighlighted: false,
+    feature: "Regulatory reporting",
+    manual: "PDF exports",
+    sdk: "None",
+    tokenforge: "Automated",
   },
   {
-    name: "Hackathon Projects",
-    ssts: false,
-    openSource: true,
-    solanaNative: true,
-    sdkAndDashboard: false,
-    isHighlighted: false,
+    feature: "Investor KYC tracking",
+    manual: "Manual files",
+    sdk: "Build your own",
+    tokenforge: "Built-in",
   },
-];
-
-const columns = [
-  { key: "ssts", label: "SSTS Compliant" },
-  { key: "openSource", label: "Open Source" },
-  { key: "solanaNative", label: "Solana Native" },
-  { key: "sdkAndDashboard", label: "SDK + Dashboard" },
+  {
+    feature: "Transfer restrictions",
+    manual: "Legal agreements",
+    sdk: "DIY",
+    tokenforge: "On-chain",
+  },
+  {
+    feature: "Time to launch",
+    manual: "3-6 months",
+    sdk: "2-3 months",
+    tokenforge: "2-4 weeks",
+  },
 ];
 
 export function ComparisonSection() {
   return (
-    <section className="py-24 bg-gradient-to-b from-[#0F0F23] to-[#1A1A3E]/30">
+    <section className="bg-gradient-to-br from-[#F8FAFC] via-[#F5F7FA] to-[#FAFBFC] py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Competitive{" "}
-            <span className="text-[#9945FF]">Comparison</span>
+        <div className="mx-auto max-w-2xl text-center mb-12">
+          <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Why TokenForge over manual processes or generic SDKs?
           </h2>
-          <p className="mt-4 text-lg text-[#8B8BA7] max-w-2xl mx-auto">
-            See how TokenForge compares to other solutions in the security token space.
+          <p className="mt-4 text-lg text-slate-600">
+            A complete platform purpose-built for Indonesian security token compliance.
           </p>
         </div>
 
-        <Card className="border-slate-800 bg-[#1A1A3E]/50">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-slate-800">
-                    <th className="text-left py-4 px-6 text-sm font-semibold text-[#8B8BA7]">
-                      Solution
-                    </th>
-                    {columns.map((col) => (
-                      <th
-                        key={col.key}
-                        className="text-center py-4 px-6 text-sm font-semibold text-[#8B8BA7]"
-                      >
-                        {col.label}
-                      </th>
-                    ))}
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50/50">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">Feature</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-500">
+                    Manual (Excel + Lawyers)
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-500">
+                    Generic SDK
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-sky-700">
+                    TokenForge
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {features.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-6 py-4 text-sm font-medium text-slate-900">{row.feature}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500">{row.manual}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500">{row.sdk}</td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center gap-1.5 text-sm font-medium text-sky-700">
+                        <Check className="h-4 w-4" />
+                        {row.tokenforge}
+                      </span>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {competitors.map((competitor) => (
-                    <tr
-                      key={competitor.name}
-                      className={`border-b border-slate-800 ${
-                        competitor.isHighlighted
-                          ? "bg-[#14F195]/5"
-                          : ""
-                      }`}
-                    >
-                      <td className="py-4 px-6">
-                        <span
-                          className={`font-semibold ${
-                            competitor.isHighlighted
-                              ? "text-[#14F195]"
-                              : "text-white"
-                          }`}
-                        >
-                          {competitor.name}
-                        </span>
-                      </td>
-                      {columns.map((col) => (
-                        <td key={col.key} className="text-center py-4 px-6">
-                          {competitor[col.key as keyof typeof competitor] ? (
-                            <Check className="h-5 w-5 text-[#14F195] mx-auto" />
-                          ) : (
-                            <X className="h-5 w-5 text-red-500 mx-auto" />
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
   );

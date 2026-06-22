@@ -1,97 +1,126 @@
 "use client";
 
-import { Terminal, ArrowRight, BookOpen, CheckCircle2, ShieldCheck, Coins, Code2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { ArrowRight, BookOpen, ShieldCheck } from "lucide-react";
+
+const partners = [
+  { name: "Halborn", image: "/halborn.png" },
+  { name: "Securitize", image: "/securitize.jpg" },
+  { name: "Solana", image: "/solana.webp" },
+  { name: "Superteam Indonesia", image: "/superteam indonesia.jpeg" },
+  { name: "Otoritas Jasa Keuangan", image: "/ojk.jpeg" },
+];
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0F0F23] via-[#0F0F23] to-[#1A1A3E]" />
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-[#14F195]/20 blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-[#9945FF]/20 blur-[120px]" />
-      </div>
+    <section className="relative overflow-hidden min-h-screen flex flex-col">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(/jakarta.webp)`,
+        }}
+      />
+      <div className="absolute inset-0 bg-black/70" />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+      {/* Main hero content - centered vertically */}
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 flex-1 flex items-center">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center w-full py-32">
           <div className="text-left">
-            <Badge variant="outline" className="border-[#14F195]/30 text-[#14F195] bg-[#14F195]/5 mb-6">
-              <ShieldCheck className="mr-2 h-3 w-3" />
-              Apache-2.0 Open Source
-            </Badge>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-medium text-white mb-6">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+              OJK Sandbox Ready — Regulation Finalizes Q3 2026
+            </div>
 
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-              The Metaplex of{" "}
-              <span className="bg-gradient-to-r from-[#14F195] to-[#9945FF] bg-clip-text text-transparent">
-                RWA Tokens
-              </span>
+            <h1 className="font-[family-name:var(--font-heading)] text-4xl font-bold tracking-normal text-white sm:text-5xl lg:text-6xl">
+              Indonesia's on-chain economy is being built now. Be the issuer, not the follower.
             </h1>
 
-            <p className="mt-6 text-lg leading-relaxed text-[#8B8BA7] max-w-xl">
-              The first open-source SDK and issuer dashboard for the Solana Security Token Standard (SSTS). 
-              Deploy compliant security tokens in hours, not months.
+            <p className="mt-6 text-lg leading-relaxed text-white/90 max-w-xl">
+              OJK is finalizing tokenization regulation in Q3 2026. The first issuers to enter sandbox will own the market. TokenForge gives you the compliance infrastructure to be first.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button
-                size="lg"
-                className="bg-[#14F195] text-[#0F0F23] hover:bg-[#14F195]/90 font-semibold"
-                onClick={() => window.open("https://github.com/reinhartsamuel/tokenforge", "_blank")}
-              >
-                Get Started
+              <button className="inline-flex h-11 px-6 items-center justify-center rounded-lg bg-sky-600 text-sm font-semibold text-white hover:bg-sky-700 transition-colors">
+                Request Demo
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-slate-700 text-white hover:bg-slate-800"
-                onClick={() => window.open("https://github.com/reinhartsamuel/tokenforge/tree/main/sdk", "_blank")}
-              >
-                Read Docs
-                <BookOpen className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-[#8B8BA7]">
-              <span className="inline-flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-[#14F195]" />
-                23 Tests Passing
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Coins className="h-4 w-4 text-[#9945FF]" />
-                4 Programs Built
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Terminal className="h-4 w-4 text-[#14F195]" />
-                13 Workflow Functions
-              </span>
+              </button>
+              <a href="/docs">
+                <button className="inline-flex h-11 px-6 items-center justify-center rounded-lg border border-white/30 bg-white/10 text-sm font-semibold text-white hover:bg-white/20 transition-colors">
+                  View Documentation
+                  <BookOpen className="ml-2 h-4 w-4" />
+                </button>
+              </a>
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-[#1A1A3E]/50 p-6 backdrop-blur-sm">
-            <div className="flex items-center gap-2 border-b border-slate-800 pb-4 mb-4">
-              <div className="h-3 w-3 rounded-full bg-red-500" />
-              <div className="h-3 w-3 rounded-full bg-yellow-500" />
-              <div className="h-3 w-3 rounded-full bg-green-500" />
-              <span className="ml-2 text-xs text-[#8B8BA7] font-mono">terminal</span>
+          <div className="rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm p-6 shadow-sm">
+            <div className="flex items-center gap-2 border-b border-white/20 pb-4 mb-4">
+              <div className="h-3 w-3 rounded-full bg-white/60" />
+              <div className="h-3 w-3 rounded-full bg-white/60" />
+              <div className="h-3 w-3 rounded-full bg-white/60" />
+              <span className="ml-2 text-xs text-white/70 font-mono">Issuer Dashboard</span>
             </div>
-            <div className="font-mono text-sm">
-              <div className="text-[#8B8BA7]">$ npm install @tokenforge/sdk</div>
-              <div className="mt-2 text-[#14F195]">
-                added 47 packages in 2.3s
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-white">Cap Table</span>
+                <span className="text-xs text-white/60 font-mono">12 investors</span>
               </div>
-              <div className="mt-4 text-[#8B8BA7]">$</div>
-              <div className="text-white">
-                <span className="text-[#9945FF]">import</span>{" "}
-                <span className="text-[#14F195]">{`{ createSecurityToken }`}</span>{" "}
-                <span className="text-[#9945FF]">from</span>{" "}
-                <span className="text-[#14F195]">'@tokenforge/sdk'</span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between rounded-lg bg-white/10 border border-white/20 px-3 py-2">
+                  <span className="text-sm text-white">PT Mandiri Investama</span>
+                  <span className="text-sm font-mono text-white">2,500,000</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-white/10 border border-white/20 px-3 py-2">
+                  <span className="text-sm text-white">BPR Nusantara</span>
+                  <span className="text-sm font-mono text-white">1,800,000</span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-white/10 border border-white/20 px-3 py-2">
+                  <span className="text-sm text-white">Asia Credit Fund</span>
+                  <span className="text-sm font-mono text-white">1,200,000</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-white/20">
+                <span className="text-xs text-white/60">Compliance Status</span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  All Verified
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Partners banner - anchored to bottom of viewport */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-white ">
+        <div className="overflow-hidden py-2">
+          <div className="flex animate-scroll items-center gap-12 whitespace-nowrap">
+            {[...partners, ...partners, ...partners, ...partners].map((partner, index) => (
+              <div key={`${partner.name}-${index}`} className="flex-shrink-0">
+                <img
+                  src={partner.image}
+                  alt={partner.name}
+                  className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-scroll {
+          animation: scroll 25s linear infinite;
+          width: max-content;
+        }
+      `}</style>
     </section>
   );
 }
