@@ -1,11 +1,18 @@
-import { Building2, Landmark, TrendingUp, ArrowRight } from "lucide-react";
+import { Building, Building2, Landmark, TrendingUp, ArrowRight } from "lucide-react";
 
 const useCases = [
+    {
+    icon: TrendingUp,
+    title: "Private Credit Funds",
+    description:
+      "Issue tokenized debt instruments with built-in compliance. Manage investor registry and distributions on-chain.",
+    features: ["Debt instrument issuance", "Cap table management", "Regulatory reporting"],
+  },
   {
     icon: Building2,
-    title: "BPR Loan Securitization",
+    title: "Community Loan Securitization",
     description:
-      "Tokenize BPR loan pools into tranches. Access institutional capital while maintaining OJK compliance.",
+      "Tokenize BPR/community bank loan pools into tranches. Access institutional capital while maintaining OJK compliance.",
     features: ["Automated tranching", "Waterfall distributions", "OJK-compliant transfers"],
   },
   {
@@ -16,11 +23,11 @@ const useCases = [
     features: ["Portfolio tokenization", "Merkle-based payouts", "Investor registry"],
   },
   {
-    icon: TrendingUp,
-    title: "Private Credit Funds",
+    icon: Building,
+    title: "Private Security Crowdfunding (SCF)",
     description:
-      "Issue tokenized debt instruments with built-in compliance. Manage investor registry and distributions on-chain.",
-    features: ["Debt instrument issuance", "Cap table management", "Regulatory reporting"],
+      "Issue private security tokens to a select accredited investors. Manage cap table and distributions on-chain.",
+    features: ["Debt instrument issuance", "Cap table management", "POJK 17/2025 Compliance Engine"],
   },
 ];
 

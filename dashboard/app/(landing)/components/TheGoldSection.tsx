@@ -61,10 +61,10 @@ export function TheGoldSection() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Indonesia's $88B tokenization window is open — but not for long
+            Indonesia&lsquo;s $88B tokenization window is open 
           </h2>
           <p className="text-lg text-slate-300 max-w-3xl mx-auto">
-            The market, the regulation, and the timing all align right now. Here's why smart issuers are moving today.
+            The market, the regulation, and the timing all align right now. Here&lsquo;s why smart issuers are moving today.
           </p>
         </div>
 
